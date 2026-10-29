@@ -1,0 +1,24 @@
+{
+  "name": "hostel-allocation-platform",
+  "version": "1.0.0",
+  "description": "Policy-Driven Hostel Allocation Engine with Roommate Compatibility Matching (P03)",
+  "private": true,
+  "workspaces": [
+    "server",
+    "client"
+  ],
+  "scripts": {
+    "dev:server": "npm --workspace=server run dev",
+    "dev:client": "npm --workspace=client run dev",
+    "dev": "concurrently -n \"SERVER,CLIENT\" -c \"blue,green\" \"npm run dev:server\" \"npm run dev:client\"",
+    "build:server": "npm --workspace=server run build",
+    "build:client": "npm --workspace=client run build",
+    "build": "npm run build:server && npm run build:client",
+    "test:server": "npm --workspace=server test",
+    "lint": "npm --workspace=server run lint && npm --workspace=client run lint"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
+
