@@ -34,3 +34,4 @@ Thumbs.db
 # Docker volume data if bound locally
 mongo_data
 redis_data
+

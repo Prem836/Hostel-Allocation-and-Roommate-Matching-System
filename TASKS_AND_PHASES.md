@@ -43,8 +43,8 @@ gantt
 - [x] Configure `docker-compose.yml` with MongoDB 7 Replica Set (`rs0`) and Redis 7.
 - [x] Establish AES-256-GCM encryption utilities for sensitive lifestyle data.
 - [x] Define core Mongoose data schemas (User, Hostel, Block, Room, Bed, Cycle, Application, Preference, Questionnaire, Draft, Assignment, Waitlist, Audit).
-- [ ] Implement JWT authentication with `httpOnly` cookies and role-based access control (`STUDENT`, `WARDEN`, `CHIEF_WARDEN`, `HOSTEL_ADMIN`, `SYSADMIN`).
-- [ ] Connect and verify GitHub Actions CI workflow (linting, typechecks, build).
+- [x] Implement JWT authentication with `httpOnly` cookies and role-based access control (`STUDENT`, `WARDEN`, `CHIEF_WARDEN`, `HOSTEL_ADMIN`, `SYSADMIN`).
+- [x] Connect and verify GitHub Actions CI workflow (linting, typechecks, build, tests).
 
 ---
 
@@ -130,3 +130,4 @@ gantt
 - [ ] **Test 3**: Verify seed reproducibility (same seed + same applicants = identical draft).
 - [ ] **Test 4**: Verify negative governance rule (saving draft never alters live bed occupancy).
 - [ ] **Test 5**: Verify DPDP data privacy (lifestyle responses inaccessible to other students).
+

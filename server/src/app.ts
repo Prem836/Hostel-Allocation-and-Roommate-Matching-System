@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import { ENV } from './config/env.js';
+import authRoutes from './modules/auth/auth.routes.js';
 
 export function createApp(): Application {
   const app = express();
@@ -37,6 +38,9 @@ export function createApp(): Application {
       modules: ['M1-Inventory', 'M2-Cycles', 'M3-Eligibility', 'M4-Preferences', 'M5-Compatibility', 'M6-AllocationEngine', 'M7-WardenReview', 'M8-Waitlist', 'M9-Publication'],
     });
   });
+
+  // Authentication API routes
+  app.use('/api/v1/auth', authRoutes);
 
   // Global Error Handler
   app.use((err: any, req: Request, res: Response, next: NextFunction) => {
