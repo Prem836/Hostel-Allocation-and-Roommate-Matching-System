@@ -50,15 +50,15 @@ gantt
 
 ### Phase 1: Inventory Management & Application Intake (Weeks 3–5)
 #### Module M1: Hostel & Bed Inventory
-- [ ] **M1.1**: Build CRUD endpoints for Hostels, Blocks, Floors, and Rooms (`/api/v1/inventory/*`).
-- [ ] **M1.2**: Implement bed-level tracking with accessibility tags (`isAccessible`, attached washroom, AC).
-- [ ] **M1.3**: Add CSV/Excel bulk import endpoint for loading thousands of rooms/beds at once.
-- [ ] **M1.4**: Build admin UI screens for inventory visualization and capacity inspection.
+- [x] **M1.1**: Build CRUD endpoints for Hostels, Blocks, Floors, and Rooms (`/api/v1/inventory/*`).
+- [x] **M1.2**: Implement bed-level tracking with accessibility tags (`isAccessible`, attached washroom, AC).
+- [x] **M1.3**: Add CSV/Excel bulk import endpoint for loading thousands of rooms/beds at once.
+- [x] **M1.4**: Build admin UI screens for inventory visualization and capacity inspection.
 
 #### Module M2: Allocation Cycles & Application Intake
-- [ ] **M2.1**: Implement Cycle Manager (`/api/v1/cycles`) with window opening/closing dates, academic year, and quotas.
-- [ ] **M2.2**: Build student application intake endpoint (`/api/v1/cycles/:id/apply`) with supporting document uploads.
-- [ ] **M2.3**: Build mobile-friendly Next.js student application portal with step-by-step progress indicator.
+- [x] **M2.1**: Implement Cycle Manager (`/api/v1/cycles`) with window opening/closing dates, academic year, and quotas.
+- [x] **M2.2**: Build student application intake endpoint (`/api/v1/cycles/:id/apply`) with supporting document uploads.
+- [x] **M2.3**: Build mobile-friendly Next.js student application portal with step-by-step progress indicator.
 
 ---
 

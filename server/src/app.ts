@@ -5,6 +5,8 @@ import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import { ENV } from './config/env.js';
 import authRoutes from './modules/auth/auth.routes.js';
+import inventoryRoutes from './modules/inventory/inventory.routes.js';
+import cycleRoutes from './modules/cycle/cycle.routes.js';
 
 export function createApp(): Application {
   const app = express();
@@ -41,6 +43,12 @@ export function createApp(): Application {
 
   // Authentication API routes
   app.use('/api/v1/auth', authRoutes);
+
+  // Module M1: Inventory Management
+  app.use('/api/v1/inventory', inventoryRoutes);
+
+  // Module M2: Cycles and Applications
+  app.use('/api/v1/cycles', cycleRoutes);
 
   // Global Error Handler
   app.use((err: any, req: Request, res: Response, next: NextFunction) => {

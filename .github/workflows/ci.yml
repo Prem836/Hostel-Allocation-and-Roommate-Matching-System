@@ -47,3 +47,4 @@ jobs:
           MONGODB_URI: mongodb://localhost:27017/hostel_test
           REDIS_HOST: localhost
           REDIS_PORT: 6379
+
