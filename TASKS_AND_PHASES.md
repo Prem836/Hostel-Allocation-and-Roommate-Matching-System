@@ -64,21 +64,21 @@ gantt
 
 ### Phase 2: Policy Validation, Preferences & Lifestyle Matching (Weeks 6–7)
 #### Module M3: Policy & Eligibility Engine
-- [ ] **M3.1**: Create deterministic rule engine checking fee status, disciplinary holds, semester standing, and distance from campus.
-- [ ] **M3.2**: Produce explicit, human-readable rejection/ineligibility reasons (no uninspected rejections).
-- [ ] **M3.3**: Provide admin interface to configure and toggle eligibility criteria per cycle.
+- [x] **M3.1**: Create deterministic rule engine checking fee status, disciplinary holds, semester standing, and distance from campus.
+- [x] **M3.2**: Produce explicit, human-readable rejection/ineligibility reasons (no uninspected rejections).
+- [x] **M3.3**: Provide admin interface to configure and toggle eligibility criteria per cycle.
 
 #### Module M4: Preference Capture
-- [ ] **M4.1**: Create student preference ranking interface (rank top 3 hostels, preferred room type: single/double/triple).
-- [ ] **M4.2**: Add optional mutual roommate request by student registration number.
+- [x] **M4.1**: Create student preference ranking interface (rank top 3 hostels, preferred room type: single/double/triple).
+- [x] **M4.2**: Add optional mutual roommate request by student registration number.
 
 #### Module M5: Lifestyle Questionnaire & Compatibility Scoring
-- [ ] **M5.1**: Build consent-gated lifestyle survey (sleep habits, study hours, cleanliness standards, noise tolerance, smoking/social habits).
-- [ ] **M5.2**: Encrypt raw student responses with AES-256-GCM before database persistence.
-- [ ] **M5.3**: Implement normalized trait vector generation $(0.0 - 1.0)$ for fast computational scoring.
-- [ ] **M5.4**: Implement pairwise compatibility metric:
+- [x] **M5.1**: Build consent-gated lifestyle survey (sleep habits, study hours, cleanliness standards, noise tolerance, smoking/social habits).
+- [x] **M5.2**: Encrypt raw student responses with AES-256-GCM before database persistence.
+- [x] **M5.3**: Implement normalized trait vector generation $(0.0 - 1.0)$ for fast computational scoring.
+- [x] **M5.4**: Implement pairwise compatibility metric:
   $$\text{Compatibility}(A, B) = \sum_{k} w_k \cdot (1 - |a_k - b_k|)$$
-- [ ] **M5.5**: Write negative security tests asserting that no student can query another student's raw questionnaire answers.
+- [x] **M5.5**: Write negative security tests asserting that no student can query another student's raw questionnaire answers.
 
 ---
 

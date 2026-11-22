@@ -7,6 +7,7 @@ import { ENV } from './config/env.js';
 import authRoutes from './modules/auth/auth.routes.js';
 import inventoryRoutes from './modules/inventory/inventory.routes.js';
 import cycleRoutes from './modules/cycle/cycle.routes.js';
+import preferenceRoutes from './modules/preference/preference.routes.js';
 
 export function createApp(): Application {
   const app = express();
@@ -49,6 +50,9 @@ export function createApp(): Application {
 
   // Module M2: Cycles and Applications
   app.use('/api/v1/cycles', cycleRoutes);
+
+  // Modules M3, M4, M5: Eligibility, Preferences, Questionnaire
+  app.use('/api/v1', preferenceRoutes);
 
   // Global Error Handler
   app.use((err: any, req: Request, res: Response, next: NextFunction) => {
