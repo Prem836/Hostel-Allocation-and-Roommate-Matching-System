@@ -8,6 +8,7 @@ import authRoutes from './modules/auth/auth.routes.js';
 import inventoryRoutes from './modules/inventory/inventory.routes.js';
 import cycleRoutes from './modules/cycle/cycle.routes.js';
 import preferenceRoutes from './modules/preference/preference.routes.js';
+import allocationRoutes from './modules/allocation/allocation.routes.js';
 
 export function createApp(): Application {
   const app = express();
@@ -53,6 +54,9 @@ export function createApp(): Application {
 
   // Modules M3, M4, M5: Eligibility, Preferences, Questionnaire
   app.use('/api/v1', preferenceRoutes);
+
+  // Module M6: Deterministic Seeded Allocation Engine
+  app.use('/api/v1', allocationRoutes);
 
   // Global Error Handler
   app.use((err: any, req: Request, res: Response, next: NextFunction) => {

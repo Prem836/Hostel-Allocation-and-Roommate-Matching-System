@@ -84,17 +84,17 @@ gantt
 
 ### Phase 3: Deterministic Allocation Engine (Weeks 8–10)
 #### Module M6: Background Allocation Worker (BullMQ + Redis)
-- [ ] **M6.1**: Setup BullMQ queue `allocation-runs` with concurrency controls and progress tracking.
-- [ ] **M6.2**: Implement Hard Constraint enforcement:
+- [x] **M6.1**: Setup BullMQ queue `allocation-runs` with concurrency controls and progress tracking.
+- [x] **M6.2**: Implement Hard Constraint enforcement:
   - Gender segregation by hostel/block/floor.
   - Strict bed capacity (no room overfilled).
   - Accessibility assignment (students with accessibility needs matched to ground-floor/accessible rooms).
-- [ ] **M6.3**: Implement Soft Constraint optimization:
+- [x] **M6.3**: Implement Soft Constraint optimization:
   - Ranked preference satisfaction scoring.
   - Grouping compatible roommates using pairwise compatibility vectors.
-- [ ] **M6.4**: Deterministic seeded tie-breaker using `seedrandom(cycle.randomSeed)` to ensure identical outputs on re-runs.
-- [ ] **M6.5**: Persist output into `AllocationDraft` and `DraftAssignment` collections.
-- [ ] **Governance Check**: Assert that the allocation worker *never* writes to `Bed.status` or `Bed.currentStudentId`.
+- [x] **M6.4**: Deterministic seeded tie-breaker using `seedrandom(cycle.randomSeed)` to ensure identical outputs on re-runs.
+- [x] **M6.5**: Persist output into `AllocationDraft` and `DraftAssignment` collections.
+- [x] **Governance Check**: Assert that the allocation worker *never* writes to `Bed.status` or `Bed.currentStudentId`.
 
 ---
 
