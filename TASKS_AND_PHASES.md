@@ -100,14 +100,14 @@ gantt
 
 ### Phase 4: Warden Review Board & Waitlist Management (Weeks 11–12)
 #### Module M7: Warden Review & Floor Bed Map
-- [ ] **M7.1**: Develop interactive visual bed map per floor in Next.js showing draft student placements.
-- [ ] **M7.2**: Implement manual drag-and-drop or select-to-reassign bed capability.
-- [ ] **M7.3**: Enforce **mandatory written justification** for any warden reassignment before the override can be saved.
-- [ ] **M7.4**: Log every override into the immutable `AuditEntry` collection.
+- [x] **M7.1**: Develop interactive visual bed map per floor in Next.js showing draft student placements.
+- [x] **M7.2**: Implement manual drag-and-drop or select-to-reassign bed capability.
+- [x] **M7.3**: Enforce **mandatory written justification** for any warden reassignment before the override can be saved.
+- [x] **M7.4**: Log every override into the immutable `AuditEntry` collection.
 
 #### Module M8: Waitlist Management
-- [ ] **M8.1**: Automatically place unmatched eligible students onto an ordered `WaitlistEntry` queue based on merit/priority score.
-- [ ] **M8.2**: Implement auto-promotion worker that offers beds to waitlisted students when vacancies arise.
+- [x] **M8.1**: Automatically place unmatched eligible students onto an ordered `WaitlistEntry` queue based on merit/priority score.
+- [x] **M8.2**: Implement auto-promotion worker that offers beds to waitlisted students when vacancies arise.
 
 ---
 

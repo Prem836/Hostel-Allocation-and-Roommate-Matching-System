@@ -9,6 +9,7 @@ import inventoryRoutes from './modules/inventory/inventory.routes.js';
 import cycleRoutes from './modules/cycle/cycle.routes.js';
 import preferenceRoutes from './modules/preference/preference.routes.js';
 import allocationRoutes from './modules/allocation/allocation.routes.js';
+import wardenRoutes from './modules/warden/warden.routes.js';
 
 export function createApp(): Application {
   const app = express();
@@ -57,6 +58,9 @@ export function createApp(): Application {
 
   // Module M6: Deterministic Seeded Allocation Engine
   app.use('/api/v1', allocationRoutes);
+
+  // Modules M7, M8: Warden Review, Overrides & Waitlist Promotion
+  app.use('/api/v1/warden', wardenRoutes);
 
   // Global Error Handler
   app.use((err: any, req: Request, res: Response, next: NextFunction) => {
