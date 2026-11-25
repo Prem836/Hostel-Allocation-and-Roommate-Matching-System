@@ -53,7 +53,7 @@ export default function StudentResultPage() {
       const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', `hostel-allocation-letter-${selectedCycleId}.pdf`);
+      link.setAttribute('download', `hostel-allotment-slip-${selectedCycleId}.pdf`);
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -68,14 +68,17 @@ export default function StudentResultPage() {
   if (!user) {
     return (
       <div className="max-w-xl mx-auto px-4 py-16 text-center">
-        <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
-          <Lock className="w-10 h-10 text-indigo-600 mx-auto mb-3" />
-          <h1 className="text-xl font-extrabold text-slate-900">Sign in to View Allocation Result</h1>
+        <div className="bg-white p-8 rounded-3xl border border-[#B1D3B9] shadow-xs">
+          <Lock className="w-10 h-10 text-[#659287] mx-auto mb-3" />
+          <h1 className="text-xl font-bold text-[#1e3831]">Sign in to View Allotment Result</h1>
+          <p className="text-xs text-[#3f5c53] mt-2 mb-6">
+            Log in with your university account to verify your room assignment and download your official allotment slip.
+          </p>
           <Link
             href="/auth"
-            className="mt-5 inline-flex px-6 py-2.5 rounded-xl bg-indigo-600 text-white text-sm font-bold"
+            className="inline-flex px-6 py-2.5 rounded-xl bg-[#659287] hover:bg-[#527a70] text-white text-sm font-semibold transition"
           >
-            Sign In
+            Sign In with Campus ID
           </Link>
         </div>
       </div>
@@ -86,16 +89,16 @@ export default function StudentResultPage() {
     <div className="max-w-4xl mx-auto px-4 py-10">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
-          <span className="px-3 py-1 bg-blue-50 text-blue-700 text-xs font-bold rounded-full uppercase border border-blue-200">
-            Module M9 · Student Result
+          <span className="px-3 py-1 bg-[#E6F2DD] text-[#1e3831] text-xs font-semibold rounded-full border border-[#B1D3B9]">
+            Official Residence Notice
           </span>
-          <h1 className="text-3xl font-extrabold text-slate-900 mt-2">Hostel Allotment Result</h1>
+          <h1 className="text-3xl font-extrabold text-[#1e3831] mt-2">Room Allotment Status</h1>
         </div>
 
         <select
           value={selectedCycleId}
           onChange={(e) => setSelectedCycleId(e.target.value)}
-          className="px-3 py-2 rounded-xl border border-slate-300 bg-white text-sm font-semibold"
+          className="px-3 py-2 rounded-xl border border-[#B1D3B9] bg-white text-sm font-semibold text-[#1e3831] focus:ring-1 focus:ring-[#659287] focus:outline-none"
         >
           {cycles?.map((c) => (
             <option key={c._id} value={c._id}>
@@ -106,105 +109,106 @@ export default function StudentResultPage() {
       </div>
 
       {isLoading ? (
-        <div className="bg-white p-10 rounded-3xl border border-slate-200 text-center text-sm text-slate-500">
-          Loading allocation result...
+        <div className="bg-white p-10 rounded-3xl border border-[#B1D3B9] text-center text-sm text-[#3f5c53]">
+          Retrieving your allotment status...
         </div>
       ) : error ? (
-        <div className="bg-white p-10 rounded-3xl border border-slate-200 text-center">
-          <Clock className="w-10 h-10 text-amber-500 mx-auto mb-3" />
-          <h2 className="text-lg font-bold text-slate-900">Not Published Yet</h2>
-          <p className="text-xs text-slate-600 mt-1">{getErrorMessage(error)}</p>
+        <div className="bg-white p-10 rounded-3xl border border-[#B1D3B9] text-center">
+          <Clock className="w-10 h-10 text-[#659287] mx-auto mb-3" />
+          <h2 className="text-lg font-bold text-[#1e3831]">Results Pending Publication</h2>
+          <p className="text-xs text-[#3f5c53] mt-1 max-w-md mx-auto">
+            {getErrorMessage(error) || 'The warden office has not finalized the allocations for this cycle yet. Please check back after official announcement.'}
+          </p>
         </div>
       ) : result?.status === 'ALLOCATED' && result.assignment ? (
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-          <div className="p-5 bg-emerald-50 border border-emerald-200 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="p-5 bg-[#E6F2DD] border border-[#88BDA4] rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <CheckCircle2 className="w-8 h-8 text-emerald-600 shrink-0" />
+              <CheckCircle2 className="w-8 h-8 text-[#659287] shrink-0" />
               <div>
-                <h2 className="text-base font-bold text-emerald-900">Accommodation Confirmed & Published</h2>
-                <p className="text-xs text-emerald-800">
-                  Published on {new Date(result.publishedAt).toLocaleDateString()}
+                <h2 className="text-base font-bold text-[#1e3831]">Hostel Room Confirmed & Allotted</h2>
+                <p className="text-xs text-[#3f5c53]">
+                  Officially confirmed on {new Date(result.publishedAt).toLocaleDateString()}
                 </p>
               </div>
             </div>
             <button
               onClick={handleDownloadPdf}
               disabled={downloading}
-              className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl shadow-sm transition"
+              className="flex items-center gap-2 px-5 py-2.5 bg-[#659287] hover:bg-[#527a70] text-white text-xs font-bold rounded-xl shadow-xs transition"
             >
               <FileDown className="w-4 h-4" />
-              {downloading ? 'Generating PDF...' : 'Download Allotment Letter (PDF)'}
+              {downloading ? 'Preparing PDF...' : 'Download Official Allotment Slip (PDF)'}
             </button>
           </div>
 
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 sm:p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-white rounded-3xl border border-[#B1D3B9] shadow-xs p-6 sm:p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-[#E6F2DD] text-[#659287] border border-[#B1D3B9] flex items-center justify-center">
                   <Building className="w-5 h-5" />
                 </div>
                 <div>
-                  <p className="text-[11px] font-bold text-slate-500 uppercase">Assigned Hostel</p>
-                  <p className="text-base font-extrabold text-slate-900">
+                  <p className="text-[11px] font-bold text-[#659287] uppercase">Allotted Hostel</p>
+                  <p className="text-base font-bold text-[#1e3831]">
                     {result.assignment.hostelId?.name} ({result.assignment.hostelId?.code})
                   </p>
                 </div>
               </div>
 
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-[#E6F2DD] text-[#659287] border border-[#B1D3B9] flex items-center justify-center">
                   <BedDouble className="w-5 h-5" />
                 </div>
                 <div>
-                  <p className="text-[11px] font-bold text-slate-500 uppercase">Room & Bed</p>
-                  <p className="text-base font-extrabold text-slate-900">
+                  <p className="text-[11px] font-bold text-[#659287] uppercase">Room & Bed Details</p>
+                  <p className="text-base font-bold text-[#1e3831]">
                     Floor {result.assignment.roomId?.floor} · Room {result.assignment.roomId?.roomNumber} · Bed{' '}
                     {result.assignment.bedId?.bedLabel}
                   </p>
-                  <p className="text-xs text-slate-500">
-                    {result.assignment.roomId?.roomType}
-                    {result.assignment.roomId?.isAccessible ? ' · Accessible Provision' : ''}
+                  <p className="text-xs text-[#3f5c53]">
+                    {result.assignment.roomId?.roomType} Room
+                    {result.assignment.roomId?.isAccessible ? ' · Ground-floor Accessible' : ''}
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="space-y-4 md:border-l border-slate-100 md:pl-6">
+            <div className="space-y-4 md:border-l border-[#B1D3B9]/50 md:pl-6">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-[#E6F2DD] text-[#659287] border border-[#B1D3B9] flex items-center justify-center">
                   <Sparkles className="w-5 h-5" />
                 </div>
                 <div>
-                  <p className="text-[11px] font-bold text-slate-500 uppercase">Compatibility Score</p>
-                  <p className="text-base font-extrabold text-emerald-700">
-                    {result.assignment.matchScore}% Match
+                  <p className="text-[11px] font-bold text-[#659287] uppercase">Roommate Harmony Score</p>
+                  <p className="text-base font-bold text-[#1e3831]">
+                    {result.assignment.matchScore}% Living Compatibility
                   </p>
                 </div>
               </div>
 
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-[#E6F2DD] text-[#659287] border border-[#B1D3B9] flex items-center justify-center">
                   <ShieldCheck className="w-5 h-5" />
                 </div>
                 <div>
-                  <p className="text-[11px] font-bold text-slate-500 uppercase">Assignment ID</p>
-                  <p className="text-xs font-mono font-bold text-slate-800">{result.assignment._id}</p>
+                  <p className="text-[11px] font-bold text-[#659287] uppercase">Allotment Verification Reference</p>
+                  <p className="text-xs font-mono font-bold text-[#1e3831]">{result.assignment._id}</p>
                 </div>
               </div>
             </div>
           </div>
         </motion.div>
       ) : result?.status === 'WAITLISTED' ? (
-        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6 text-amber-900">
-          <h2 className="text-lg font-bold">Waitlisted — Rank #{result.waitlistRank}</h2>
-          <p className="text-xs mt-1">
-            You are currently on the ordered waitlist ({result.waitlistStatus}). You will be automatically
-            notified if a bed becomes vacant.
+        <div className="bg-[#E6F2DD] border border-[#88BDA4] rounded-2xl p-6 text-[#1e3831]">
+          <h2 className="text-lg font-bold">Waitlisted — Queue Position #{result.waitlistRank}</h2>
+          <p className="text-xs text-[#3f5c53] mt-1">
+            You are currently on the verified waiting list ({result.waitlistStatus}). As enrolled students cancel or change rooms, the warden desk will notify you immediately via email.
           </p>
         </div>
       ) : (
-        <div className="bg-white p-8 rounded-2xl border border-slate-200 text-center text-sm text-slate-600">
-          No allocation record found for your account in this cycle.
+        <div className="bg-white p-8 rounded-2xl border border-[#B1D3B9] text-center text-sm text-[#3f5c53]">
+          No active application or allocation found for this round. Please submit an application during the open window.
         </div>
       )}
     </div>

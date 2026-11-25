@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
-  ClipboardCheck,
+  ClipboardList,
   ListOrdered,
   Sparkles,
   CheckCircle2,
@@ -17,6 +17,7 @@ import {
   BookOpen,
   Volume2,
   Cigarette,
+  ShieldCheck,
 } from 'lucide-react';
 import { api, getErrorMessage } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
@@ -94,7 +95,7 @@ export default function StudentHubPage() {
       return res.data.data;
     },
     onSuccess: () => {
-      setBanner({ type: 'success', text: 'Application submitted! Proceed to rank your hostel preferences.' });
+      setBanner({ type: 'success', text: 'Application details recorded. Next, rank your hostel preferences.' });
       queryClient.invalidateQueries({ queryKey: ['my-application'] });
       setStep(2);
     },
@@ -111,7 +112,7 @@ export default function StudentHubPage() {
       return res.data.data;
     },
     onSuccess: () => {
-      setBanner({ type: 'success', text: 'Preferences saved! Complete the compatibility survey next.' });
+      setBanner({ type: 'success', text: 'Hostel choices saved. Please complete your living habits survey.' });
       setStep(3);
     },
     onError: (err) => setBanner({ type: 'error', text: getErrorMessage(err) }),
@@ -125,7 +126,7 @@ export default function StudentHubPage() {
     onSuccess: () => {
       setBanner({
         type: 'success',
-        text: 'Lifestyle questionnaire encrypted with AES-256-GCM and saved securely!',
+        text: 'Your living habit preferences have been safely recorded for roommate compatibility matching.',
       });
     },
     onError: (err) => setBanner({ type: 'error', text: getErrorMessage(err) }),
@@ -148,18 +149,17 @@ export default function StudentHubPage() {
   if (!user) {
     return (
       <div className="max-w-xl mx-auto px-4 py-16 text-center">
-        <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
-          <Lock className="w-10 h-10 text-indigo-600 mx-auto mb-3" />
-          <h1 className="text-xl font-extrabold text-slate-900">Sign in to Access Student Hub</h1>
-          <p className="text-sm text-slate-600 mt-2 mb-6">
-            You must be logged in as a student to apply for hostel accommodation, rank preferences, and
-            submit your lifestyle survey.
+        <div className="bg-white p-8 rounded-3xl border border-[#B1D3B9] shadow-xs">
+          <Lock className="w-10 h-10 text-[#659287] mx-auto mb-3" />
+          <h1 className="text-xl font-bold text-[#1e3831]">Student Sign-In Required</h1>
+          <p className="text-sm text-[#3f5c53] mt-2 mb-6">
+            Please log in with your student credentials to submit your hostel application and preference rankings.
           </p>
           <Link
             href="/auth"
-            className="inline-flex px-6 py-2.5 rounded-xl bg-indigo-600 text-white text-sm font-bold hover:bg-indigo-700 transition"
+            className="inline-flex px-6 py-2.5 rounded-xl bg-[#659287] hover:bg-[#527a70] text-white text-sm font-semibold transition"
           >
-            Go to Sign In / Register
+            Sign In with Campus ID
           </Link>
         </div>
       </div>
@@ -170,21 +170,21 @@ export default function StudentHubPage() {
     <div className="max-w-4xl mx-auto px-4 py-10">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
-          <span className="px-3 py-1 bg-indigo-50 text-indigo-700 text-xs font-bold rounded-full uppercase tracking-wider border border-indigo-200">
-            Student Application Hub · M2 / M4 / M5
+          <span className="px-3 py-1 bg-[#E6F2DD] text-[#1e3831] text-xs font-semibold rounded-full border border-[#B1D3B9]">
+            Hostel Application Portal
           </span>
-          <h1 className="text-3xl font-extrabold text-slate-900 mt-2">Apply & Match</h1>
+          <h1 className="text-3xl font-extrabold text-[#1e3831] mt-2">Room Allotment & Preferences</h1>
         </div>
 
         {/* Cycle Selector */}
         <div className="min-w-[240px]">
-          <label className="block text-[10px] font-bold uppercase text-slate-500 mb-1">
-            Allocation Cycle
+          <label className="block text-[11px] font-bold uppercase text-[#659287] mb-1">
+            Current Allotment Window
           </label>
           <select
             value={selectedCycleId}
             onChange={(e) => setSelectedCycleId(e.target.value)}
-            className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white text-sm font-semibold focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+            className="w-full px-3 py-2 rounded-xl border border-[#B1D3B9] bg-white text-sm font-semibold text-[#1e3831] focus:ring-1 focus:ring-[#659287] focus:outline-none"
           >
             {cycles?.map((c) => (
               <option key={c._id} value={c._id}>
@@ -196,11 +196,11 @@ export default function StudentHubPage() {
       </div>
 
       {/* Stepper */}
-      <div className="grid grid-cols-3 gap-2 p-1.5 bg-slate-200/70 rounded-2xl mb-6">
+      <div className="grid grid-cols-3 gap-2 p-1.5 bg-[#E6F2DD] rounded-2xl mb-6 border border-[#B1D3B9]">
         {[
-          { num: 1 as const, label: '1. Application (M2)', icon: ClipboardCheck },
-          { num: 2 as const, label: '2. Preferences (M4)', icon: ListOrdered },
-          { num: 3 as const, label: '3. Compatibility (M5)', icon: Sparkles },
+          { num: 1 as const, label: '1. Basic Details', icon: ClipboardList },
+          { num: 2 as const, label: '2. Hostel Choices', icon: ListOrdered },
+          { num: 3 as const, label: '3. Living Habits', icon: Sparkles },
         ].map((s) => {
           const Icon = s.icon;
           const active = step === s.num;
@@ -210,16 +210,16 @@ export default function StudentHubPage() {
               type="button"
               onClick={() => setStep(s.num)}
               className={`relative py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition ${
-                active ? 'text-indigo-700' : 'text-slate-600 hover:text-slate-900'
+                active ? 'text-[#1e3831]' : 'text-[#659287] hover:text-[#1e3831]'
               }`}
             >
               {active && (
                 <motion.span
                   layoutId="student-step"
-                  className="absolute inset-0 bg-white rounded-xl shadow-sm"
+                  className="absolute inset-0 bg-white rounded-xl shadow-xs border border-[#88BDA4]/50"
                 />
               )}
-              <Icon className="w-4 h-4 relative z-10" />
+              <Icon className="w-4 h-4 relative z-10 text-[#659287]" />
               <span className="relative z-10 hidden sm:inline">{s.label}</span>
               <span className="relative z-10 sm:hidden">Step {s.num}</span>
             </button>
@@ -236,14 +236,14 @@ export default function StudentHubPage() {
             exit={{ opacity: 0, y: -8 }}
             className={`mb-6 p-4 rounded-2xl border text-xs font-semibold flex items-center gap-2 ${
               banner.type === 'success'
-                ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
+                ? 'bg-[#E6F2DD] border-[#88BDA4] text-[#1e3831]'
                 : 'bg-rose-50 border-rose-200 text-rose-800'
             }`}
           >
             {banner.type === 'success' ? (
-              <CheckCircle2 className="w-4 h-4 shrink-0" />
+              <CheckCircle2 className="w-4 h-4 shrink-0 text-[#659287]" />
             ) : (
-              <AlertCircle className="w-4 h-4 shrink-0" />
+              <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
             )}
             {banner.text}
           </motion.div>
@@ -252,16 +252,16 @@ export default function StudentHubPage() {
 
       {/* Existing Application Status Badge */}
       {myApp && (
-        <div className="mb-6 p-4 bg-white rounded-2xl border border-slate-200 flex flex-wrap items-center justify-between gap-2 text-xs">
+        <div className="mb-6 p-4 bg-white rounded-2xl border border-[#B1D3B9] flex flex-wrap items-center justify-between gap-2 text-xs">
           <div>
-            <span className="font-bold text-slate-700">Current Application Status: </span>
-            <span className="px-2.5 py-0.5 rounded-full font-bold bg-indigo-50 text-indigo-700">
+            <span className="font-bold text-[#1e3831]">Application Status: </span>
+            <span className="px-2.5 py-0.5 rounded-full font-bold bg-[#E6F2DD] text-[#1e3831] border border-[#B1D3B9]">
               {myApp.status}
             </span>
           </div>
           {myApp.ineligibilityReasons?.length > 0 && (
-            <span className="text-rose-600 font-medium">
-              Reasons: {myApp.ineligibilityReasons.join('; ')}
+            <span className="text-amber-700 font-medium">
+              Note: {myApp.ineligibilityReasons.join('; ')}
             </span>
           )}
         </div>
@@ -275,13 +275,19 @@ export default function StudentHubPage() {
             initial={{ opacity: 0, x: -12 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 12 }}
-            className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-5"
+            className="bg-white p-6 sm:p-8 rounded-3xl border border-[#B1D3B9] shadow-xs space-y-5"
           >
-            <h2 className="text-xl font-extrabold text-slate-900">Submit Hostel Application</h2>
+            <div>
+              <h2 className="text-xl font-bold text-[#1e3831]">Academic & Distance Eligibility</h2>
+              <p className="text-xs text-[#3f5c53] mt-1">
+                Provide your current academic standing and permanent residence distance to evaluate allotment priority.
+              </p>
+            </div>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
-                  Current CGPA (0 - 10)
+                <label className="block text-xs font-bold text-[#1e3831] uppercase mb-1">
+                  Cumulative GPA (0.00 – 10.00)
                 </label>
                 <input
                   type="number"
@@ -290,12 +296,12 @@ export default function StudentHubPage() {
                   max="10"
                   value={appForm.cgpa}
                   onChange={(e) => setAppForm({ ...appForm, cgpa: parseFloat(e.target.value) || 0 })}
-                  className="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-sm"
+                  className="w-full px-3 py-2.5 border border-[#B1D3B9] rounded-xl text-sm focus:border-[#659287] focus:ring-1 focus:ring-[#659287] focus:outline-none"
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
-                  Home Distance from Campus (km)
+                <label className="block text-xs font-bold text-[#1e3831] uppercase mb-1">
+                  Permanent Home Distance (km)
                 </label>
                 <input
                   type="number"
@@ -304,29 +310,29 @@ export default function StudentHubPage() {
                   onChange={(e) =>
                     setAppForm({ ...appForm, distanceFromCampusKm: parseFloat(e.target.value) || 0 })
                   }
-                  className="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-sm"
+                  className="w-full px-3 py-2.5 border border-[#B1D3B9] rounded-xl text-sm focus:border-[#659287] focus:ring-1 focus:ring-[#659287] focus:outline-none"
                 />
               </div>
             </div>
 
             <div className="space-y-2.5 pt-2">
-              <label className="flex items-center gap-2.5 text-sm text-slate-700 cursor-pointer">
+              <label className="flex items-center gap-2.5 text-sm text-[#1e3831] cursor-pointer">
                 <input
                   type="checkbox"
                   checked={appForm.feeCleared}
                   onChange={(e) => setAppForm({ ...appForm, feeCleared: e.target.checked })}
-                  className="accent-indigo-600 w-4 h-4 rounded"
+                  className="accent-[#659287] w-4 h-4 rounded"
                 />
-                Institutional & tuition fees are cleared
+                All college tuition and hostel dues are cleared up to date
               </label>
-              <label className="flex items-center gap-2.5 text-sm text-slate-700 cursor-pointer">
+              <label className="flex items-center gap-2.5 text-sm text-[#1e3831] cursor-pointer">
                 <input
                   type="checkbox"
                   checked={appForm.isAccessibleRequired}
                   onChange={(e) => setAppForm({ ...appForm, isAccessibleRequired: e.target.checked })}
-                  className="accent-indigo-600 w-4 h-4 rounded"
+                  className="accent-[#659287] w-4 h-4 rounded"
                 />
-                Require accessible / ground-floor accommodation
+                Medical disability or wheelchair accessibility requested (ground floor allotment)
               </label>
             </div>
 
@@ -334,9 +340,9 @@ export default function StudentHubPage() {
               type="button"
               onClick={() => applyMutation.mutate()}
               disabled={!selectedCycleId || applyMutation.isPending}
-              className="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white text-sm font-bold shadow-md shadow-indigo-500/20 transition"
+              className="w-full py-3 rounded-xl bg-[#659287] hover:bg-[#527a70] disabled:opacity-50 text-white text-sm font-bold shadow-xs transition"
             >
-              {applyMutation.isPending ? 'Submitting...' : 'Submit Application & Continue'}
+              {applyMutation.isPending ? 'Verifying & Saving...' : 'Save & Continue to Hostel Preferences'}
             </button>
           </motion.div>
         )}
@@ -347,31 +353,31 @@ export default function StudentHubPage() {
             initial={{ opacity: 0, x: -12 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 12 }}
-            className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6"
+            className="bg-white p-6 sm:p-8 rounded-3xl border border-[#B1D3B9] shadow-xs space-y-6"
           >
             <div>
-              <h2 className="text-xl font-extrabold text-slate-900">Rank Hostel & Room Preferences</h2>
-              <p className="text-xs text-slate-500 mt-1">
-                Order your preferred hostels from 1st choice to 3rd choice.
+              <h2 className="text-xl font-bold text-[#1e3831]">Rank Your Preferred Hostels</h2>
+              <p className="text-xs text-[#3f5c53] mt-1">
+                Drag or use the arrows to order your preferred hostel blocks from 1st choice to 3rd choice.
               </p>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               {rankedHostelIds.map((hId, idx) => {
                 const h = hostels?.find((x) => x._id === hId);
                 return (
                   <div
                     key={hId}
-                    className="p-3.5 rounded-xl border border-slate-200 bg-slate-50 flex items-center justify-between"
+                    className="p-3.5 rounded-xl border border-[#B1D3B9] bg-[#E6F2DD]/30 flex items-center justify-between"
                   >
                     <div className="flex items-center gap-3">
-                      <span className="w-7 h-7 rounded-lg bg-indigo-600 text-white text-xs font-extrabold flex items-center justify-center">
+                      <span className="w-7 h-7 rounded-lg bg-[#659287] text-white text-xs font-bold flex items-center justify-center">
                         #{idx + 1}
                       </span>
                       <div>
-                        <p className="text-sm font-bold text-slate-900">{h?.name || hId}</p>
-                        <p className="text-[11px] text-slate-500">
-                          {h?.code} · {h?.gender}
+                        <p className="text-sm font-bold text-[#1e3831]">{h?.name || hId}</p>
+                        <p className="text-[11px] text-[#3f5c53]">
+                          {h?.code} · {h?.gender} Hostel
                         </p>
                       </div>
                     </div>
@@ -379,16 +385,18 @@ export default function StudentHubPage() {
                       <button
                         type="button"
                         onClick={() => moveHostel(idx, -1)}
-                        className="p-1.5 rounded-lg hover:bg-white border border-transparent hover:border-slate-200"
+                        className="p-1.5 rounded-lg hover:bg-white border border-transparent hover:border-[#B1D3B9]"
+                        title="Move higher"
                       >
-                        <ArrowUp className="w-4 h-4 text-slate-600" />
+                        <ArrowUp className="w-4 h-4 text-[#659287]" />
                       </button>
                       <button
                         type="button"
                         onClick={() => moveHostel(idx, 1)}
-                        className="p-1.5 rounded-lg hover:bg-white border border-transparent hover:border-slate-200"
+                        className="p-1.5 rounded-lg hover:bg-white border border-transparent hover:border-[#B1D3B9]"
+                        title="Move lower"
                       >
-                        <ArrowDown className="w-4 h-4 text-slate-600" />
+                        <ArrowDown className="w-4 h-4 text-[#659287]" />
                       </button>
                     </div>
                   </div>
@@ -397,8 +405,8 @@ export default function StudentHubPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase mb-2">
-                Preferred Room Types
+              <label className="block text-xs font-bold text-[#1e3831] uppercase mb-2">
+                Room Sharing Type Preference
               </label>
               <div className="flex flex-wrap gap-2">
                 {['SINGLE', 'DOUBLE', 'TRIPLE', 'DORMITORY'].map((rt) => {
@@ -410,8 +418,8 @@ export default function StudentHubPage() {
                       onClick={() => toggleRoomType(rt)}
                       className={`px-4 py-2 rounded-xl text-xs font-bold border transition ${
                         selected
-                          ? 'bg-indigo-600 text-white border-indigo-600'
-                          : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'
+                          ? 'bg-[#659287] text-white border-[#659287]'
+                          : 'bg-white text-[#1e3831] border-[#B1D3B9] hover:bg-[#E6F2DD]'
                       }`}
                     >
                       {rt}
@@ -422,25 +430,28 @@ export default function StudentHubPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
-                Optional Roommate Registration Number
+              <label className="block text-xs font-bold text-[#1e3831] uppercase mb-1">
+                Requested Roommate Registration ID (Optional)
               </label>
               <input
                 type="text"
                 value={requestedRoommateRegNumber}
                 onChange={(e) => setRequestedRoommateRegNumber(e.target.value)}
                 placeholder="e.g. 2026CSE002"
-                className="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-sm"
+                className="w-full px-3 py-2.5 border border-[#B1D3B9] rounded-xl text-sm focus:border-[#659287] focus:ring-1 focus:ring-[#659287] focus:outline-none"
               />
+              <p className="text-[11px] text-[#3f5c53] mt-1">
+                If both students list each other as mutual roommate requests, the allotment office will prioritize placing you in the same room.
+              </p>
             </div>
 
             <button
               type="button"
               onClick={() => prefMutation.mutate()}
               disabled={rankedHostelIds.length === 0 || prefMutation.isPending}
-              className="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white text-sm font-bold shadow-md shadow-indigo-500/20 transition"
+              className="w-full py-3 rounded-xl bg-[#659287] hover:bg-[#527a70] disabled:opacity-50 text-white text-sm font-bold shadow-xs transition"
             >
-              {prefMutation.isPending ? 'Saving...' : 'Save Preferences & Continue'}
+              {prefMutation.isPending ? 'Saving choices...' : 'Save Choices & Go to Living Habits'}
             </button>
           </motion.div>
         )}
@@ -451,62 +462,62 @@ export default function StudentHubPage() {
             initial={{ opacity: 0, x: -12 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 12 }}
-            className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6"
+            className="bg-white p-6 sm:p-8 rounded-3xl border border-[#B1D3B9] shadow-xs space-y-6"
           >
             <div>
-              <h2 className="text-xl font-extrabold text-slate-900">Lifestyle Compatibility Survey</h2>
-              <p className="text-xs text-slate-500 mt-1">
-                Encrypted with AES-256-GCM at rest. Only aggregate compatibility scores are used.
+              <h2 className="text-xl font-bold text-[#1e3831]">Living Habits & Roommate Compatibility</h2>
+              <p className="text-xs text-[#3f5c53] mt-1">
+                These lifestyle preferences help us pair roommates with similar routines so you can live comfortably together.
               </p>
             </div>
 
             {[
               {
                 key: 'sleepSchedule' as const,
-                label: 'Sleep Schedule',
+                label: 'Sleep Routine',
                 icon: Moon,
-                left: 'Night Owl',
-                right: 'Early Bird',
+                left: 'Night Owl (Late Sleeper)',
+                right: 'Early Riser (Morning Person)',
               },
               {
                 key: 'studyHabit' as const,
-                label: 'Study Environment',
+                label: 'Study Preference',
                 icon: BookOpen,
-                left: 'In Room',
-                right: 'Library',
+                left: 'Studies in Room',
+                right: 'Prefers Library / Reading Room',
               },
               {
                 key: 'cleanliness' as const,
-                label: 'Room Cleanliness',
+                label: 'Room Tidiness Expectation',
                 icon: Sparkles,
-                left: 'Relaxed',
-                right: 'Very Tidy',
+                left: 'Casual & Relaxed',
+                right: 'Spotless & Highly Organized',
               },
               {
                 key: 'noiseTolerance' as const,
-                label: 'Noise Tolerance',
+                label: 'Sound & Music Atmosphere',
                 icon: Volume2,
-                left: 'Pin-Drop Silence',
-                right: 'Social / Music',
+                left: 'Prefers Quiet Study Silence',
+                right: 'Enjoys Background Music & Chatting',
               },
               {
                 key: 'smokingTolerance' as const,
-                label: 'Smoking Preference',
+                label: 'Campus Policy & Fresh Air',
                 icon: Cigarette,
-                left: 'Strictly Non-Smoking',
-                right: 'Flexible',
+                left: 'Strict Smoke-Free Environment',
+                right: 'Flexible / Moderate',
               },
             ].map((trait) => {
               const Icon = trait.icon;
               const val = survey[trait.key];
               return (
-                <div key={trait.key}>
+                <div key={trait.key} className="p-3 rounded-xl bg-[#f7faf5] border border-[#B1D3B9]/60">
                   <div className="flex justify-between items-center mb-1.5">
-                    <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                      <Icon className="w-4 h-4 text-indigo-600" /> {trait.label}
+                    <span className="text-xs font-bold text-[#1e3831] flex items-center gap-1.5">
+                      <Icon className="w-4 h-4 text-[#659287]" /> {trait.label}
                     </span>
-                    <span className="text-[11px] font-semibold text-indigo-600">
-                      {val < 0.4 ? trait.left : val > 0.6 ? trait.right : 'Balanced'} ({val})
+                    <span className="text-[11px] font-semibold text-[#659287]">
+                      {val < 0.4 ? trait.left : val > 0.6 ? trait.right : 'Moderate / Flexible'}
                     </span>
                   </div>
                   <input
@@ -516,22 +527,21 @@ export default function StudentHubPage() {
                     step="0.1"
                     value={val}
                     onChange={(e) => setSurvey({ ...survey, [trait.key]: parseFloat(e.target.value) })}
-                    className="w-full accent-indigo-600 cursor-pointer"
+                    className="w-full accent-[#659287] cursor-pointer"
                   />
                 </div>
               );
             })}
 
-            <label className="p-4 rounded-xl bg-slate-50 border border-slate-200 flex items-start gap-3 text-xs text-slate-600 cursor-pointer">
+            <label className="p-4 rounded-xl bg-[#E6F2DD]/60 border border-[#B1D3B9] flex items-start gap-3 text-xs text-[#1e3831] cursor-pointer">
               <input
                 type="checkbox"
                 checked={survey.consentGiven}
                 onChange={(e) => setSurvey({ ...survey, consentGiven: e.target.checked })}
-                className="mt-0.5 accent-indigo-600 w-4 h-4 rounded"
+                className="mt-0.5 accent-[#659287] w-4 h-4 rounded"
               />
               <span>
-                <strong>DPDP Consent:</strong> I consent to processing my lifestyle habits strictly for
-                compatibility scoring. Raw responses are encrypted and never shown to other students.
+                <strong>Confidentiality Declaration:</strong> I authorize the residence life committee to use my lifestyle responses solely to identify compatible roommates. My individual question answers remain confidential.
               </span>
             </label>
 
@@ -539,9 +549,9 @@ export default function StudentHubPage() {
               type="button"
               onClick={() => surveyMutation.mutate()}
               disabled={!survey.consentGiven || surveyMutation.isPending}
-              className="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 disabled:opacity-50 text-white text-sm font-bold shadow-md shadow-indigo-500/20 transition"
+              className="w-full py-3 rounded-xl bg-[#659287] hover:bg-[#527a70] disabled:opacity-50 text-white text-sm font-bold shadow-xs transition"
             >
-              {surveyMutation.isPending ? 'Encrypting & Saving...' : 'Submit & Encrypt Survey'}
+              {surveyMutation.isPending ? 'Saving preferences...' : 'Save Living Habits & Complete Form'}
             </button>
           </motion.div>
         )}

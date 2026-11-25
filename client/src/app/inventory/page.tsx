@@ -72,7 +72,7 @@ export default function InventoryAndCyclesPage() {
   const createHostel = useMutation({
     mutationFn: async () => (await api.post('/inventory/hostels', hostelForm)).data.data,
     onSuccess: (h) => {
-      setBanner({ type: 'success', text: `Hostel '${h.name}' created.` });
+      setBanner({ type: 'success', text: `Hostel residence '${h.name}' added to campus directory.` });
       setHostelForm({ name: '', code: '', gender: 'MALE' });
       queryClient.invalidateQueries({ queryKey: ['inventory-hostels'] });
       queryClient.invalidateQueries({ queryKey: ['inventory-stats'] });
@@ -83,7 +83,7 @@ export default function InventoryAndCyclesPage() {
   const createBlock = useMutation({
     mutationFn: async () => (await api.post('/inventory/blocks', blockForm)).data.data,
     onSuccess: (b) => {
-      setBanner({ type: 'success', text: `Block '${b.name}' added.` });
+      setBanner({ type: 'success', text: `Residential wing '${b.name}' added successfully.` });
       setBlockForm({ ...blockForm, name: '', code: '' });
       queryClient.invalidateQueries({ queryKey: ['inventory-blocks'] });
     },
@@ -95,7 +95,7 @@ export default function InventoryAndCyclesPage() {
     onSuccess: (res) => {
       setBanner({
         type: 'success',
-        text: `Room ${res.room.roomNumber} created with ${res.beds.length} vacant beds.`,
+        text: `Room ${res.room.roomNumber} configured with ${res.beds.length} beds.`,
       });
       setRoomForm({ ...roomForm, roomNumber: '' });
       queryClient.invalidateQueries({ queryKey: ['inventory-hostels'] });
@@ -114,7 +114,7 @@ export default function InventoryAndCyclesPage() {
         })
       ).data.data,
     onSuccess: (c) => {
-      setBanner({ type: 'success', text: `Allocation cycle '${c.title}' created in DRAFT state.` });
+      setBanner({ type: 'success', text: `New allotment window '${c.title}' scheduled.` });
       queryClient.invalidateQueries({ queryKey: ['cycles-all'] });
     },
     onError: (err) => setBanner({ type: 'error', text: getErrorMessage(err) }),
@@ -124,7 +124,7 @@ export default function InventoryAndCyclesPage() {
     mutationFn: async ({ id, status }: { id: string; status: string }) =>
       (await api.patch(`/cycles/${id}/status`, { status })).data.data,
     onSuccess: (c) => {
-      setBanner({ type: 'success', text: `Cycle '${c.title}' status updated to ${c.status}.` });
+      setBanner({ type: 'success', text: `Allotment round '${c.title}' is now ${c.status}.` });
       queryClient.invalidateQueries({ queryKey: ['cycles-all'] });
     },
     onError: (err) => setBanner({ type: 'error', text: getErrorMessage(err) }),
@@ -132,46 +132,46 @@ export default function InventoryAndCyclesPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-200">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-[#B1D3B9]/60">
         <div>
-          <span className="px-3 py-1 bg-purple-50 text-purple-700 text-xs font-bold rounded-full border border-purple-200 uppercase">
-            Modules M1 & M2 · Admin Console
+          <span className="px-3 py-1 bg-[#E6F2DD] text-[#1e3831] text-xs font-bold rounded-full border border-[#B1D3B9] uppercase">
+            Housing Administration
           </span>
-          <h1 className="text-3xl font-extrabold text-slate-900 mt-2">Inventory & Cycle Manager</h1>
+          <h1 className="text-3xl font-extrabold text-[#1e3831] mt-2">Hostel Directory & Allotment Windows</h1>
         </div>
 
-        <div className="flex gap-1 bg-slate-200/70 p-1 rounded-xl">
+        <div className="flex gap-1 bg-[#E6F2DD] p-1 rounded-xl border border-[#B1D3B9]/60">
           {(['inventory', 'cycles'] as const).map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={`relative px-4 py-2 text-xs font-bold uppercase rounded-lg transition ${
-                activeTab === tab ? 'text-indigo-700' : 'text-slate-600'
+                activeTab === tab ? 'text-[#1e3831]' : 'text-[#659287]'
               }`}
             >
               {activeTab === tab && (
                 <motion.span
                   layoutId="inv-tab"
-                  className="absolute inset-0 bg-white rounded-lg shadow-sm"
+                  className="absolute inset-0 bg-white rounded-lg shadow-xs border border-[#88BDA4]/40"
                 />
               )}
-              <span className="relative z-10">{tab === 'inventory' ? 'Hostels & Beds' : 'Allocation Cycles'}</span>
+              <span className="relative z-10">{tab === 'inventory' ? 'Hostels & Rooms' : 'Allotment Windows'}</span>
             </button>
           ))}
         </div>
       </div>
 
-      {/* Live Stats Strip */}
+      {/* Stats Overview */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
         {[
-          { label: 'Hostels', val: stats?.totalHostels ?? 0 },
-          { label: 'Rooms', val: stats?.totalRooms ?? 0 },
-          { label: 'Total Beds', val: stats?.totalBeds ?? 0 },
-          { label: 'Vacant Beds', val: stats?.vacantBeds ?? 0 },
+          { label: 'Campus Hostels', val: stats?.totalHostels ?? 0 },
+          { label: 'Residential Rooms', val: stats?.totalRooms ?? 0 },
+          { label: 'Bed Capacity', val: stats?.totalBeds ?? 0 },
+          { label: 'Vacant Spaces', val: stats?.vacantBeds ?? 0 },
         ].map((s) => (
-          <div key={s.label} className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-            <p className="text-[11px] font-bold uppercase text-slate-500">{s.label}</p>
-            <p className="text-2xl font-extrabold text-slate-900 mt-1">{s.val}</p>
+          <div key={s.label} className="bg-white p-4 rounded-xl border border-[#B1D3B9] shadow-xs">
+            <p className="text-[11px] font-bold uppercase text-[#659287]">{s.label}</p>
+            <p className="text-2xl font-extrabold text-[#1e3831] mt-1">{s.val}</p>
           </div>
         ))}
       </div>
@@ -184,11 +184,11 @@ export default function InventoryAndCyclesPage() {
             exit={{ opacity: 0 }}
             className={`mb-6 p-4 rounded-xl border text-xs font-semibold flex items-center gap-2 ${
               banner.type === 'success'
-                ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
+                ? 'bg-[#E6F2DD] border-[#88BDA4] text-[#1e3831]'
                 : 'bg-rose-50 border-rose-200 text-rose-800'
             }`}
           >
-            {banner.type === 'success' ? <CheckCircle2 className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
+            {banner.type === 'success' ? <CheckCircle2 className="w-4 h-4 text-[#659287]" /> : <AlertCircle className="w-4 h-4 text-rose-600" />}
             {banner.text}
           </motion.div>
         )}
@@ -204,32 +204,32 @@ export default function InventoryAndCyclesPage() {
                 e.preventDefault();
                 createHostel.mutate();
               }}
-              className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3"
+              className="bg-white p-5 rounded-2xl border border-[#B1D3B9] shadow-xs space-y-3"
             >
-              <h2 className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
-                <Plus className="w-4 h-4 text-indigo-600" /> 1. Register Hostel
+              <h2 className="text-sm font-bold text-[#1e3831] flex items-center gap-2">
+                <Plus className="w-4 h-4 text-[#659287]" /> 1. Register Hostel Residence
               </h2>
               <input
                 type="text"
                 required
-                placeholder="Hostel Name (e.g. APJ Kalam Hall)"
+                placeholder="Hostel Name (e.g. Tagore Hall)"
                 value={hostelForm.name}
                 onChange={(e) => setHostelForm({ ...hostelForm, name: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm"
+                className="w-full px-3 py-2 border border-[#B1D3B9] rounded-xl text-sm focus:border-[#659287] focus:ring-1 focus:ring-[#659287] focus:outline-none"
               />
               <div className="grid grid-cols-2 gap-2">
                 <input
                   type="text"
                   required
-                  placeholder="Code (BH-1)"
+                  placeholder="Code (e.g. TH-1)"
                   value={hostelForm.code}
                   onChange={(e) => setHostelForm({ ...hostelForm, code: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm"
+                  className="w-full px-3 py-2 border border-[#B1D3B9] rounded-xl text-sm focus:border-[#659287] focus:ring-1 focus:ring-[#659287] focus:outline-none"
                 />
                 <select
                   value={hostelForm.gender}
                   onChange={(e) => setHostelForm({ ...hostelForm, gender: e.target.value as any })}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white"
+                  className="w-full px-3 py-2 border border-[#B1D3B9] rounded-xl text-sm bg-white text-[#1e3831]"
                 >
                   <option value="MALE">Male</option>
                   <option value="FEMALE">Female</option>
@@ -239,9 +239,9 @@ export default function InventoryAndCyclesPage() {
               <button
                 type="submit"
                 disabled={createHostel.isPending}
-                className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl transition"
+                className="w-full py-2.5 bg-[#659287] hover:bg-[#527a70] text-white text-xs font-bold rounded-xl transition"
               >
-                Create Hostel
+                Add Hostel
               </button>
             </form>
 
@@ -251,18 +251,18 @@ export default function InventoryAndCyclesPage() {
                 e.preventDefault();
                 createBlock.mutate();
               }}
-              className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3"
+              className="bg-white p-5 rounded-2xl border border-[#B1D3B9] shadow-xs space-y-3"
             >
-              <h2 className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
-                <Layers className="w-4 h-4 text-indigo-600" /> 2. Add Block
+              <h2 className="text-sm font-bold text-[#1e3831] flex items-center gap-2">
+                <Layers className="w-4 h-4 text-[#659287]" /> 2. Add Building Wing / Block
               </h2>
               <select
                 required
                 value={blockForm.hostelId}
                 onChange={(e) => setBlockForm({ ...blockForm, hostelId: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white"
+                className="w-full px-3 py-2 border border-[#B1D3B9] rounded-xl text-sm bg-white text-[#1e3831]"
               >
-                <option value="">Select Hostel...</option>
+                <option value="">Select Hostel Residence...</option>
                 {hostels?.map((h) => (
                   <option key={h._id} value={h._id}>
                     {h.name} ({h.code})
@@ -273,10 +273,10 @@ export default function InventoryAndCyclesPage() {
                 <input
                   type="text"
                   required
-                  placeholder="Block Name (East)"
+                  placeholder="Wing Name (e.g. North Wing)"
                   value={blockForm.name}
                   onChange={(e) => setBlockForm({ ...blockForm, name: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm"
+                  className="w-full px-3 py-2 border border-[#B1D3B9] rounded-xl text-sm focus:border-[#659287] focus:ring-1 focus:ring-[#659287] focus:outline-none"
                 />
                 <input
                   type="text"
@@ -284,15 +284,15 @@ export default function InventoryAndCyclesPage() {
                   placeholder="Code (BLK-A)"
                   value={blockForm.code}
                   onChange={(e) => setBlockForm({ ...blockForm, code: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm"
+                  className="w-full px-3 py-2 border border-[#B1D3B9] rounded-xl text-sm focus:border-[#659287] focus:ring-1 focus:ring-[#659287] focus:outline-none"
                 />
               </div>
               <button
                 type="submit"
                 disabled={createBlock.isPending}
-                className="w-full py-2.5 bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold rounded-xl transition"
+                className="w-full py-2.5 bg-[#88BDA4] hover:bg-[#73a990] text-[#1e3831] text-xs font-bold rounded-xl transition"
               >
-                Create Block
+                Add Wing
               </button>
             </form>
 
@@ -302,18 +302,18 @@ export default function InventoryAndCyclesPage() {
                 e.preventDefault();
                 createRoom.mutate();
               }}
-              className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3"
+              className="bg-white p-5 rounded-2xl border border-[#B1D3B9] shadow-xs space-y-3"
             >
-              <h2 className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
-                <DoorOpen className="w-4 h-4 text-indigo-600" /> 3. Add Room & Auto-Beds
+              <h2 className="text-sm font-bold text-[#1e3831] flex items-center gap-2">
+                <DoorOpen className="w-4 h-4 text-[#659287]" /> 3. Add Room & Beds
               </h2>
               <select
                 required
                 value={roomForm.hostelId}
                 onChange={(e) => setRoomForm({ ...roomForm, hostelId: e.target.value, blockId: '' })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white"
+                className="w-full px-3 py-2 border border-[#B1D3B9] rounded-xl text-sm bg-white text-[#1e3831]"
               >
-                <option value="">Select Hostel...</option>
+                <option value="">Select Hostel Residence...</option>
                 {hostels?.map((h) => (
                   <option key={h._id} value={h._id}>
                     {h.name} ({h.code})
@@ -324,9 +324,9 @@ export default function InventoryAndCyclesPage() {
                 required
                 value={roomForm.blockId}
                 onChange={(e) => setRoomForm({ ...roomForm, blockId: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white"
+                className="w-full px-3 py-2 border border-[#B1D3B9] rounded-xl text-sm bg-white text-[#1e3831]"
               >
-                <option value="">Select Block...</option>
+                <option value="">Select Wing / Block...</option>
                 {blocks?.map((b) => (
                   <option key={b._id} value={b._id}>
                     {b.name} ({b.code})
@@ -340,7 +340,7 @@ export default function InventoryAndCyclesPage() {
                   placeholder="Room # (101)"
                   value={roomForm.roomNumber}
                   onChange={(e) => setRoomForm({ ...roomForm, roomNumber: e.target.value })}
-                  className="px-3 py-2 border border-slate-300 rounded-xl text-sm"
+                  className="px-3 py-2 border border-[#B1D3B9] rounded-xl text-sm"
                 />
                 <input
                   type="number"
@@ -348,7 +348,7 @@ export default function InventoryAndCyclesPage() {
                   placeholder="Floor"
                   value={roomForm.floor}
                   onChange={(e) => setRoomForm({ ...roomForm, floor: parseInt(e.target.value, 10) || 0 })}
-                  className="px-3 py-2 border border-slate-300 rounded-xl text-sm"
+                  className="px-3 py-2 border border-[#B1D3B9] rounded-xl text-sm"
                 />
                 <input
                   type="number"
@@ -356,26 +356,26 @@ export default function InventoryAndCyclesPage() {
                   placeholder="Beds"
                   value={roomForm.capacity}
                   onChange={(e) => setRoomForm({ ...roomForm, capacity: parseInt(e.target.value, 10) || 1 })}
-                  className="px-3 py-2 border border-slate-300 rounded-xl text-sm"
+                  className="px-3 py-2 border border-[#B1D3B9] rounded-xl text-sm"
                 />
               </div>
               <div className="flex items-center justify-between gap-2">
                 <select
                   value={roomForm.roomType}
                   onChange={(e) => setRoomForm({ ...roomForm, roomType: e.target.value as any })}
-                  className="px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white flex-1"
+                  className="px-3 py-2 border border-[#B1D3B9] rounded-xl text-sm bg-white flex-1 text-[#1e3831]"
                 >
                   <option value="SINGLE">SINGLE</option>
                   <option value="DOUBLE">DOUBLE</option>
                   <option value="TRIPLE">TRIPLE</option>
                   <option value="DORMITORY">DORMITORY</option>
                 </select>
-                <label className="flex items-center gap-1.5 text-xs text-slate-700 cursor-pointer">
+                <label className="flex items-center gap-1.5 text-xs text-[#1e3831] cursor-pointer">
                   <input
                     type="checkbox"
                     checked={roomForm.isAccessible}
                     onChange={(e) => setRoomForm({ ...roomForm, isAccessible: e.target.checked })}
-                    className="accent-indigo-600"
+                    className="accent-[#659287]"
                   />
                   Accessible
                 </label>
@@ -383,18 +383,18 @@ export default function InventoryAndCyclesPage() {
               <button
                 type="submit"
                 disabled={createRoom.isPending}
-                className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl transition"
+                className="w-full py-2.5 bg-[#659287] hover:bg-[#527a70] text-white text-xs font-bold rounded-xl transition"
               >
-                Create Room + Beds
+                Save Room & Beds
               </button>
             </form>
           </div>
 
           {/* Hostels Grid */}
           <div className="lg:col-span-2 space-y-4">
-            <h2 className="text-lg font-extrabold text-slate-900 flex items-center gap-2">
-              <Building2 className="w-5 h-5 text-indigo-600" />
-              Registered Hostels ({hostels?.length ?? 0})
+            <h2 className="text-lg font-bold text-[#1e3831] flex items-center gap-2">
+              <Building2 className="w-5 h-5 text-[#659287]" />
+              Campus Residences ({hostels?.length ?? 0})
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {hostels?.map((h) => (
@@ -402,25 +402,25 @@ export default function InventoryAndCyclesPage() {
                   key={h._id}
                   initial={{ opacity: 0, scale: 0.98 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition"
+                  className="bg-white p-5 rounded-2xl border border-[#B1D3B9] shadow-xs hover:border-[#88BDA4] transition"
                 >
                   <div className="flex justify-between items-start">
                     <div>
-                      <span className="text-[11px] font-bold text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-full">
+                      <span className="text-[11px] font-bold text-[#1e3831] bg-[#E6F2DD] px-2.5 py-0.5 rounded-full border border-[#B1D3B9]">
                         {h.code}
                       </span>
-                      <h3 className="font-bold text-slate-900 text-base mt-2">{h.name}</h3>
+                      <h3 className="font-bold text-[#1e3831] text-base mt-2">{h.name}</h3>
                     </div>
-                    <span className="text-[11px] px-2.5 py-1 rounded-full font-bold bg-slate-100 text-slate-700">
+                    <span className="text-[11px] px-2.5 py-1 rounded-full font-bold bg-[#E6F2DD] text-[#3f5c53]">
                       {h.gender}
                     </span>
                   </div>
-                  <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-600">
+                  <div className="mt-4 pt-3 border-t border-[#B1D3B9]/50 flex items-center justify-between text-xs text-[#3f5c53]">
                     <span className="flex items-center gap-1.5">
-                      <BedDouble className="w-4 h-4 text-indigo-500" />
+                      <BedDouble className="w-4 h-4 text-[#659287]" />
                       Capacity: <strong>{h.totalCapacity} beds</strong>
                     </span>
-                    <span className="text-[11px] text-slate-400 font-mono">{h._id.slice(-6)}</span>
+                    <span className="text-[11px] text-[#659287] font-mono">{h._id.slice(-6)}</span>
                   </div>
                 </motion.div>
               ))}
@@ -435,18 +435,18 @@ export default function InventoryAndCyclesPage() {
               e.preventDefault();
               createCycle.mutate();
             }}
-            className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-3.5"
+            className="bg-white p-6 rounded-2xl border border-[#B1D3B9] shadow-xs space-y-3.5"
           >
-            <h2 className="text-base font-extrabold text-slate-900 flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-indigo-600" /> Create Allocation Cycle
+            <h2 className="text-base font-bold text-[#1e3831] flex items-center gap-2">
+              <Calendar className="w-4 h-4 text-[#659287]" /> Schedule Application Window
             </h2>
             <input
               type="text"
               required
-              placeholder="Cycle Title"
+              placeholder="Round Title (e.g. Fall 2026 Room Allotment)"
               value={cycleForm.title}
               onChange={(e) => setCycleForm({ ...cycleForm, title: e.target.value })}
-              className="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm"
+              className="w-full px-3 py-2 border border-[#B1D3B9] rounded-xl text-sm focus:border-[#659287] focus:ring-1 focus:ring-[#659287] focus:outline-none"
             />
             <div className="grid grid-cols-2 gap-2">
               <input
@@ -455,7 +455,7 @@ export default function InventoryAndCyclesPage() {
                 placeholder="2026-2027"
                 value={cycleForm.academicYear}
                 onChange={(e) => setCycleForm({ ...cycleForm, academicYear: e.target.value })}
-                className="px-3 py-2 border border-slate-300 rounded-xl text-sm"
+                className="px-3 py-2 border border-[#B1D3B9] rounded-xl text-sm"
               />
               <input
                 type="number"
@@ -463,65 +463,65 @@ export default function InventoryAndCyclesPage() {
                 max={8}
                 value={cycleForm.semester}
                 onChange={(e) => setCycleForm({ ...cycleForm, semester: parseInt(e.target.value, 10) || 1 })}
-                className="px-3 py-2 border border-slate-300 rounded-xl text-sm"
+                className="px-3 py-2 border border-[#B1D3B9] rounded-xl text-sm"
               />
             </div>
             <div>
-              <label className="block text-[10px] font-bold uppercase text-slate-500 mb-1">Window Start</label>
+              <label className="block text-[10px] font-bold uppercase text-[#659287] mb-1">Applications Open</label>
               <input
                 type="datetime-local"
                 value={cycleForm.windowStart}
                 onChange={(e) => setCycleForm({ ...cycleForm, windowStart: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs"
+                className="w-full px-3 py-2 border border-[#B1D3B9] rounded-xl text-xs"
               />
             </div>
             <div>
-              <label className="block text-[10px] font-bold uppercase text-slate-500 mb-1">Window End</label>
+              <label className="block text-[10px] font-bold uppercase text-[#659287] mb-1">Applications Close</label>
               <input
                 type="datetime-local"
                 value={cycleForm.windowEnd}
                 onChange={(e) => setCycleForm({ ...cycleForm, windowEnd: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs"
+                className="w-full px-3 py-2 border border-[#B1D3B9] rounded-xl text-xs"
               />
             </div>
             <div>
-              <label className="block text-[10px] font-bold uppercase text-slate-500 mb-1">Deterministic Seed</label>
+              <label className="block text-[10px] font-bold uppercase text-[#659287] mb-1">Auditing Reference Seed</label>
               <input
                 type="number"
                 value={cycleForm.randomSeed}
                 onChange={(e) => setCycleForm({ ...cycleForm, randomSeed: parseInt(e.target.value, 10) || 42 })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm"
+                className="w-full px-3 py-2 border border-[#B1D3B9] rounded-xl text-sm"
               />
             </div>
             <button
               type="submit"
               disabled={createCycle.isPending}
-              className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl transition"
+              className="w-full py-2.5 bg-[#659287] hover:bg-[#527a70] text-white text-xs font-bold rounded-xl transition"
             >
-              Create Cycle
+              Open Application Window
             </button>
           </form>
 
           {/* Cycles List */}
           <div className="lg:col-span-2 space-y-3">
-            <h2 className="text-lg font-extrabold text-slate-900">Allocation Cycles ({cycles?.length ?? 0})</h2>
+            <h2 className="text-lg font-bold text-[#1e3831]">Scheduled Allotment Rounds ({cycles?.length ?? 0})</h2>
             {cycles?.map((c) => (
               <div
                 key={c._id}
-                className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                className="bg-white p-5 rounded-2xl border border-[#B1D3B9] shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4"
               >
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-indigo-50 text-indigo-700">
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#E6F2DD] text-[#1e3831] border border-[#B1D3B9]">
                       {c.status}
                     </span>
-                    <span className="text-xs text-slate-500">
-                      {c.academicYear} · Sem {c.semester} · Seed {c.randomSeed}
+                    <span className="text-xs text-[#3f5c53]">
+                      Academic Year {c.academicYear} · Semester {c.semester}
                     </span>
                   </div>
-                  <h3 className="text-base font-bold text-slate-900 mt-1">{c.title}</h3>
-                  <p className="text-xs text-slate-500 mt-0.5">
-                    Applicants: {c.totalApplicantsCount} · Allocated: {c.allocatedCount} · Waitlisted:{' '}
+                  <h3 className="text-base font-bold text-[#1e3831] mt-1">{c.title}</h3>
+                  <p className="text-xs text-[#3f5c53] mt-0.5">
+                    Applicants: {c.totalApplicantsCount} · Allotted: {c.allocatedCount} · Waiting List:{' '}
                     {c.waitlistedCount}
                   </p>
                 </div>
@@ -532,7 +532,7 @@ export default function InventoryAndCyclesPage() {
                       key={st}
                       onClick={() => updateCycleStatus.mutate({ id: c._id, status: st })}
                       disabled={c.status === st}
-                      className="px-3 py-1.5 rounded-lg border border-slate-300 text-xs font-bold hover:bg-slate-50 disabled:opacity-40 transition"
+                      className="px-3 py-1.5 rounded-lg border border-[#B1D3B9] text-xs font-bold text-[#1e3831] hover:bg-[#E6F2DD] disabled:opacity-40 transition"
                     >
                       Set {st}
                     </button>

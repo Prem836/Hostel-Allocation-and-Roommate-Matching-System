@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Lock, Mail, User, Hash, Shield, ArrowRight, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Lock, Mail, User, Hash, ArrowRight, CheckCircle2, AlertCircle } from 'lucide-react';
 import { api, getErrorMessage } from '@/lib/api';
 import { useAuthStore, UserRole } from '@/store/authStore';
 
@@ -61,15 +61,15 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-12 bg-gradient-to-br from-slate-50 via-indigo-50/40 to-violet-50/40">
+    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-12 bg-gradient-to-b from-[#E6F2DD]/30 via-[#f7faf5] to-[#ffffff]">
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="w-full max-w-lg bg-white rounded-3xl shadow-xl shadow-slate-200/60 border border-slate-200/80 overflow-hidden"
+        className="w-full max-w-lg bg-white rounded-3xl shadow-sm border border-[#B1D3B9] overflow-hidden"
       >
-        {/* Top Switcher */}
-        <div className="p-2 bg-slate-100/80 m-6 mb-0 rounded-2xl grid grid-cols-2 gap-1">
+        {/* Switcher */}
+        <div className="p-1.5 bg-[#E6F2DD] m-6 mb-0 rounded-2xl grid grid-cols-2 gap-1 border border-[#B1D3B9]/60">
           {(['login', 'register'] as const).map((tab) => (
             <button
               key={tab}
@@ -79,17 +79,17 @@ export default function AuthPage() {
                 setError(null);
               }}
               className={`relative py-2.5 text-xs font-bold uppercase tracking-wider rounded-xl transition-colors ${
-                mode === tab ? 'text-indigo-700' : 'text-slate-500 hover:text-slate-800'
+                mode === tab ? 'text-[#1e3831]' : 'text-[#659287] hover:text-[#1e3831]'
               }`}
             >
               {mode === tab && (
                 <motion.span
                   layoutId="auth-tab"
                   transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                  className="absolute inset-0 bg-white rounded-xl shadow-sm"
+                  className="absolute inset-0 bg-white rounded-xl shadow-xs border border-[#88BDA4]/40"
                 />
               )}
-              <span className="relative z-10">{tab === 'login' ? 'Sign In' : 'Create Account'}</span>
+              <span className="relative z-10">{tab === 'login' ? 'Student & Staff Login' : 'New Registration'}</span>
             </button>
           ))}
         </div>
@@ -101,9 +101,9 @@ export default function AuthPage() {
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
-                className="mb-5 p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-medium flex items-center gap-2"
+                className="mb-5 p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-medium flex items-center gap-2"
               >
-                <AlertCircle className="w-4 h-4 shrink-0" />
+                <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
                 {error}
               </motion.div>
             )}
@@ -118,42 +118,42 @@ export default function AuthPage() {
               className="space-y-4"
             >
               <div>
-                <h1 className="text-2xl font-extrabold text-slate-900">Welcome back</h1>
-                <p className="text-xs text-slate-500 mt-1">
-                  Sign in with your university email or registration number.
+                <h1 className="text-2xl font-bold text-[#1e3831]">Sign in to your account</h1>
+                <p className="text-xs text-[#3f5c53] mt-1">
+                  Enter your official college email address or student registration number.
                 </p>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase mb-1.5">
-                  Email or Registration No.
+                <label className="block text-xs font-bold text-[#1e3831] uppercase mb-1.5">
+                  Email or Registration ID
                 </label>
                 <div className="relative">
-                  <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
+                  <Mail className="w-4 h-4 text-[#659287] absolute left-3.5 top-3" />
                   <input
                     type="text"
                     required
                     value={loginForm.emailOrReg}
                     onChange={(e) => setLoginForm({ ...loginForm, emailOrReg: e.target.value })}
-                    placeholder="e.g. aarav@uni.edu or 2026CSE001"
-                    className="w-full pl-10 pr-4 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                    placeholder="student@university.edu or 2026CSE001"
+                    className="w-full pl-10 pr-4 py-2.5 border border-[#B1D3B9] rounded-xl text-sm focus:border-[#659287] focus:ring-1 focus:ring-[#659287] focus:outline-none"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase mb-1.5">
+                <label className="block text-xs font-bold text-[#1e3831] uppercase mb-1.5">
                   Password
                 </label>
                 <div className="relative">
-                  <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
+                  <Lock className="w-4 h-4 text-[#659287] absolute left-3.5 top-3" />
                   <input
                     type="password"
                     required
                     value={loginForm.password}
                     onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
-                    placeholder="••••••••"
-                    className="w-full pl-10 pr-4 py-2.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                    placeholder="Enter your account password"
+                    className="w-full pl-10 pr-4 py-2.5 border border-[#B1D3B9] rounded-xl text-sm focus:border-[#659287] focus:ring-1 focus:ring-[#659287] focus:outline-none"
                   />
                 </div>
               </div>
@@ -161,9 +161,9 @@ export default function AuthPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 disabled:opacity-60 text-white text-sm font-bold flex items-center justify-center gap-2 shadow-md shadow-indigo-500/25 transition"
+                className="w-full py-3 rounded-xl bg-[#659287] hover:bg-[#527a70] disabled:opacity-60 text-white text-sm font-bold flex items-center justify-center gap-2 shadow-xs transition"
               >
-                {loading ? 'Signing in...' : 'Sign In'}
+                {loading ? 'Verifying credentials...' : 'Sign In'}
                 <ArrowRight className="w-4 h-4" />
               </button>
             </motion.form>
@@ -176,42 +176,42 @@ export default function AuthPage() {
               className="space-y-3.5"
             >
               <div>
-                <h1 className="text-2xl font-extrabold text-slate-900">Create Account</h1>
-                <p className="text-xs text-slate-500 mt-1">
-                  Register as a Student, Warden, or Hostel Administrator.
+                <h1 className="text-2xl font-bold text-[#1e3831]">Create Your Student Profile</h1>
+                <p className="text-xs text-[#3f5c53] mt-1">
+                  Fill in your academic and hostel profile details to get started.
                 </p>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-700 uppercase mb-1">
+                  <label className="block text-[11px] font-bold text-[#1e3831] uppercase mb-1">
                     Full Name
                   </label>
                   <div className="relative">
-                    <User className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-3" />
+                    <User className="w-3.5 h-3.5 text-[#659287] absolute left-3 top-3" />
                     <input
                       type="text"
                       required
                       value={regForm.fullName}
                       onChange={(e) => setRegForm({ ...regForm, fullName: e.target.value })}
-                      placeholder="Aarav Sharma"
-                      className="w-full pl-9 pr-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                      placeholder="e.g. Aarav Sharma"
+                      className="w-full pl-9 pr-3 py-2 border border-[#B1D3B9] rounded-xl text-sm focus:border-[#659287] focus:ring-1 focus:ring-[#659287] focus:outline-none"
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-700 uppercase mb-1">
+                  <label className="block text-[11px] font-bold text-[#1e3831] uppercase mb-1">
                     Registration No.
                   </label>
                   <div className="relative">
-                    <Hash className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-3" />
+                    <Hash className="w-3.5 h-3.5 text-[#659287] absolute left-3 top-3" />
                     <input
                       type="text"
                       required
                       value={regForm.registrationNumber}
                       onChange={(e) => setRegForm({ ...regForm, registrationNumber: e.target.value })}
-                      placeholder="2026CSE001"
-                      className="w-full pl-9 pr-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                      placeholder="e.g. 2026CSE001"
+                      className="w-full pl-9 pr-3 py-2 border border-[#B1D3B9] rounded-xl text-sm focus:border-[#659287] focus:ring-1 focus:ring-[#659287] focus:outline-none"
                     />
                   </div>
                 </div>
@@ -219,20 +219,20 @@ export default function AuthPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-700 uppercase mb-1">
-                    Email
+                  <label className="block text-[11px] font-bold text-[#1e3831] uppercase mb-1">
+                    Campus Email
                   </label>
                   <input
                     type="email"
                     required
                     value={regForm.email}
                     onChange={(e) => setRegForm({ ...regForm, email: e.target.value })}
-                    placeholder="aarav@uni.edu"
-                    className="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                    placeholder="student@university.edu"
+                    className="w-full px-3 py-2 border border-[#B1D3B9] rounded-xl text-sm focus:border-[#659287] focus:ring-1 focus:ring-[#659287] focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-700 uppercase mb-1">
+                  <label className="block text-[11px] font-bold text-[#1e3831] uppercase mb-1">
                     Password (min 8 chars)
                   </label>
                   <input
@@ -241,21 +241,21 @@ export default function AuthPage() {
                     minLength={8}
                     value={regForm.password}
                     onChange={(e) => setRegForm({ ...regForm, password: e.target.value })}
-                    placeholder="••••••••"
-                    className="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                    placeholder="Create a secure password"
+                    className="w-full px-3 py-2 border border-[#B1D3B9] rounded-xl text-sm focus:border-[#659287] focus:ring-1 focus:ring-[#659287] focus:outline-none"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-700 uppercase mb-1">
+                  <label className="block text-[11px] font-bold text-[#1e3831] uppercase mb-1">
                     Gender
                   </label>
                   <select
                     value={regForm.gender}
                     onChange={(e) => setRegForm({ ...regForm, gender: e.target.value as any })}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                    className="w-full px-3 py-2 border border-[#B1D3B9] rounded-xl text-sm bg-white focus:border-[#659287] focus:ring-1 focus:ring-[#659287] focus:outline-none text-[#1e3831]"
                   >
                     <option value="MALE">Male</option>
                     <option value="FEMALE">Female</option>
@@ -263,38 +263,38 @@ export default function AuthPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-700 uppercase mb-1">
-                    Role
+                  <label className="block text-[11px] font-bold text-[#1e3831] uppercase mb-1">
+                    Account Role
                   </label>
                   <select
                     value={regForm.role}
                     onChange={(e) => setRegForm({ ...regForm, role: e.target.value as UserRole })}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                    className="w-full px-3 py-2 border border-[#B1D3B9] rounded-xl text-sm bg-white focus:border-[#659287] focus:ring-1 focus:ring-[#659287] focus:outline-none text-[#1e3831]"
                   >
                     <option value="STUDENT">Student</option>
-                    <option value="WARDEN">Warden</option>
+                    <option value="WARDEN">Hostel Warden</option>
                     <option value="CHIEF_WARDEN">Chief Warden</option>
-                    <option value="HOSTEL_ADMIN">Hostel Admin</option>
+                    <option value="HOSTEL_ADMIN">Hostel Administrator</option>
                   </select>
                 </div>
               </div>
 
-              <label className="flex items-center gap-2 text-xs text-slate-600 pt-1 cursor-pointer">
+              <label className="flex items-center gap-2 text-xs text-[#3f5c53] pt-1 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={regForm.isAccessibleNeed}
                   onChange={(e) => setRegForm({ ...regForm, isAccessibleNeed: e.target.checked })}
-                  className="accent-indigo-600 w-4 h-4 rounded"
+                  className="accent-[#659287] w-4 h-4 rounded"
                 />
-                Requires ground-floor / wheelchair-accessible room
+                Require ground-floor or wheelchair accessible accommodation
               </label>
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 disabled:opacity-60 text-white text-sm font-bold flex items-center justify-center gap-2 shadow-md shadow-indigo-500/25 transition mt-2"
+                className="w-full py-3 rounded-xl bg-[#659287] hover:bg-[#527a70] disabled:opacity-60 text-white text-sm font-bold flex items-center justify-center gap-2 shadow-xs transition mt-2"
               >
-                {loading ? 'Creating Account...' : 'Create Account'}
+                {loading ? 'Creating student profile...' : 'Complete Registration'}
                 <CheckCircle2 className="w-4 h-4" />
               </button>
             </motion.form>
