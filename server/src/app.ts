@@ -10,6 +10,7 @@ import cycleRoutes from './modules/cycle/cycle.routes.js';
 import preferenceRoutes from './modules/preference/preference.routes.js';
 import allocationRoutes from './modules/allocation/allocation.routes.js';
 import wardenRoutes from './modules/warden/warden.routes.js';
+import publicationRoutes from './modules/publication/publication.routes.js';
 
 export function createApp(): Application {
   const app = express();
@@ -61,6 +62,9 @@ export function createApp(): Application {
 
   // Modules M7, M8: Warden Review, Overrides & Waitlist Promotion
   app.use('/api/v1/warden', wardenRoutes);
+
+  // Module M9: Transactional Publication, PDF Letters & Analytics
+  app.use('/api/v1/publication', publicationRoutes);
 
   // Global Error Handler
   app.use((err: any, req: Request, res: Response, next: NextFunction) => {

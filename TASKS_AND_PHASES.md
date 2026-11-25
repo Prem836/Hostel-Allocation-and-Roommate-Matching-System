@@ -113,21 +113,21 @@ gantt
 
 ### Phase 5: Publication, PDF Letters, Analytics & Handover (Weeks 13–14)
 #### Module M9: Transactional Publication & Letter Generation
-- [ ] **M9.1**: Build atomic publish action (`POST /api/v1/drafts/:id/publish`) wrapped in a MongoDB transaction:
+- [x] **M9.1**: Build atomic publish action (`POST /api/v1/drafts/:id/publish`) wrapped in a MongoDB transaction:
   - Validates warden approval.
   - Updates live `Bed.status` to `OCCUPIED` and sets `currentStudentId`.
   - Marks cycle as `PUBLISHED`.
-- [ ] **M9.2**: Generate downloadable PDF allocation letters (using PDFKit / server-side renderer) featuring student details, room assignment, QR code verification, and check-in dates.
-- [ ] **M9.3**: Send automated email and in-app notifications on publication.
+- [x] **M9.2**: Generate downloadable PDF allocation letters (using PDFKit / server-side renderer) featuring student details, room assignment, QR code verification, and check-in dates.
+- [x] **M9.3**: Send automated email and in-app notifications on publication.
 
 #### System Analytics & Reporting
-- [ ] **M9.4**: Build admin occupancy heatmap and capacity analytics.
-- [ ] **M9.5**: Build preference satisfaction reports (% of students receiving 1st vs 2nd choice) and warden override frequency reports.
+- [x] **M9.4**: Build admin occupancy heatmap and capacity analytics.
+- [x] **M9.5**: Build preference satisfaction reports (% of students receiving 1st vs 2nd choice) and warden override frequency reports.
 
 #### Invariant & Property-Based Test Suite
-- [ ] **Test 1**: Verify zero duplicate bed assignments under any load.
-- [ ] **Test 2**: Verify zero double-assigned students.
-- [ ] **Test 3**: Verify seed reproducibility (same seed + same applicants = identical draft).
-- [ ] **Test 4**: Verify negative governance rule (saving draft never alters live bed occupancy).
-- [ ] **Test 5**: Verify DPDP data privacy (lifestyle responses inaccessible to other students).
+- [x] **Test 1**: Verify zero duplicate bed assignments under any load.
+- [x] **Test 2**: Verify zero double-assigned students.
+- [x] **Test 3**: Verify seed reproducibility (same seed + same applicants = identical draft).
+- [x] **Test 4**: Verify negative governance rule (saving draft never alters live bed occupancy).
+- [x] **Test 5**: Verify DPDP data privacy (lifestyle responses inaccessible to other students).
 
