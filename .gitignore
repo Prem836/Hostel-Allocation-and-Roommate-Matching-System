@@ -30,6 +30,7 @@ Thumbs.db
 .vscode
 *.swp
 *.swo
+*.tsbuildinfo
 
 # Docker volume data if bound locally
 mongo_data
