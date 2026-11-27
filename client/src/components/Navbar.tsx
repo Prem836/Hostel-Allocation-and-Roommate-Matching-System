@@ -69,7 +69,12 @@ export function Navbar() {
 
         {/* Desktop Nav */}
         <nav className="hidden lg:flex items-center gap-1 bg-[#ffffff]/90 p-1 rounded-xl border border-[#B1D3B9]/70 shadow-xs">
-          {NAV_LINKS.map((item) => {
+          {NAV_LINKS.filter((item) => {
+            if (item.href === '/warden/floor-map') {
+              return user && ['WARDEN', 'CHIEF_WARDEN', 'HOSTEL_ADMIN', 'SYSADMIN'].includes(user.role);
+            }
+            return true;
+          }).map((item) => {
             const active = pathname === item.href;
             const Icon = item.icon;
             return (
@@ -197,7 +202,12 @@ export function Navbar() {
             exit={{ height: 0, opacity: 0 }}
             className="lg:hidden overflow-hidden border-t border-[#B1D3B9] bg-[#E6F2DD] px-4 py-3 space-y-1"
           >
-            {NAV_LINKS.map((item) => {
+            {NAV_LINKS.filter((item) => {
+              if (item.href === '/warden/floor-map') {
+                return user && ['WARDEN', 'CHIEF_WARDEN', 'HOSTEL_ADMIN', 'SYSADMIN'].includes(user.role);
+              }
+              return true;
+            }).map((item) => {
               const active = pathname === item.href;
               const Icon = item.icon;
               return (

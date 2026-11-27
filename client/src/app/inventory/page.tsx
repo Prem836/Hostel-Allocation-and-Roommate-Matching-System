@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
@@ -14,9 +15,13 @@ import {
   DoorOpen,
 } from 'lucide-react';
 import { api, getErrorMessage } from '@/lib/api';
+import { useAuthStore } from '@/store/authStore';
 
 export default function InventoryAndCyclesPage() {
   const queryClient = useQueryClient();
+  const { user } = useAuthStore();
+  const isAdminOrWarden = user && ['HOSTEL_ADMIN', 'SYSADMIN', 'CHIEF_WARDEN', 'WARDEN'].includes(user.role);
+
   const [activeTab, setActiveTab] = useState<'inventory' | 'cycles'>('inventory');
   const [banner, setBanner] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
@@ -135,7 +140,7 @@ export default function InventoryAndCyclesPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-[#B1D3B9]/60">
         <div>
           <span className="px-3 py-1 bg-[#E6F2DD] text-[#1e3831] text-xs font-bold rounded-full border border-[#B1D3B9] uppercase">
-            Housing Administration
+            {isAdminOrWarden ? 'Housing Administration' : 'Campus Living Directory'}
           </span>
           <h1 className="text-3xl font-extrabold text-[#1e3831] mt-2">Hostel Directory & Allotment Windows</h1>
         </div>
@@ -195,208 +200,215 @@ export default function InventoryAndCyclesPage() {
       </AnimatePresence>
 
       {activeTab === 'inventory' ? (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Forms Column */}
-          <div className="space-y-6">
-            {/* Add Hostel */}
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                createHostel.mutate();
-              }}
-              className="bg-white p-5 rounded-2xl border border-[#B1D3B9] shadow-xs space-y-3"
-            >
-              <h2 className="text-sm font-bold text-[#1e3831] flex items-center gap-2">
-                <Plus className="w-4 h-4 text-[#659287]" /> 1. Register Hostel Residence
-              </h2>
-              <input
-                type="text"
-                required
-                placeholder="Hostel Name (e.g. Tagore Hall)"
-                value={hostelForm.name}
-                onChange={(e) => setHostelForm({ ...hostelForm, name: e.target.value })}
-                className="w-full px-3 py-2 border border-[#B1D3B9] rounded-xl text-sm focus:border-[#659287] focus:ring-1 focus:ring-[#659287] focus:outline-none"
-              />
-              <div className="grid grid-cols-2 gap-2">
+        <div className={`grid grid-cols-1 ${isAdminOrWarden ? 'lg:grid-cols-3' : 'lg:grid-cols-1'} gap-6`}>
+          {/* Forms Column (Admins & Wardens Only) */}
+          {isAdminOrWarden && (
+            <div className="space-y-6">
+              {/* Add Hostel */}
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  createHostel.mutate();
+                }}
+                className="bg-white p-5 rounded-2xl border border-[#B1D3B9] shadow-xs space-y-3"
+              >
+                <h2 className="text-sm font-bold text-[#1e3831] flex items-center gap-2">
+                  <Plus className="w-4 h-4 text-[#659287]" /> 1. Register Hostel Residence
+                </h2>
                 <input
                   type="text"
                   required
-                  placeholder="Code (e.g. TH-1)"
-                  value={hostelForm.code}
-                  onChange={(e) => setHostelForm({ ...hostelForm, code: e.target.value })}
+                  placeholder="Hostel Name (e.g. Tagore Hall)"
+                  value={hostelForm.name}
+                  onChange={(e) => setHostelForm({ ...hostelForm, name: e.target.value })}
                   className="w-full px-3 py-2 border border-[#B1D3B9] rounded-xl text-sm focus:border-[#659287] focus:ring-1 focus:ring-[#659287] focus:outline-none"
                 />
+                <div className="grid grid-cols-2 gap-2">
+                  <input
+                    type="text"
+                    required
+                    placeholder="Code (e.g. TH-1)"
+                    value={hostelForm.code}
+                    onChange={(e) => setHostelForm({ ...hostelForm, code: e.target.value })}
+                    className="w-full px-3 py-2 border border-[#B1D3B9] rounded-xl text-sm focus:border-[#659287] focus:ring-1 focus:ring-[#659287] focus:outline-none"
+                  />
+                  <select
+                    value={hostelForm.gender}
+                    onChange={(e) => setHostelForm({ ...hostelForm, gender: e.target.value as any })}
+                    className="w-full px-3 py-2 border border-[#B1D3B9] rounded-xl text-sm bg-white text-[#1e3831]"
+                  >
+                    <option value="MALE">Male</option>
+                    <option value="FEMALE">Female</option>
+                    <option value="COED">Co-Ed</option>
+                  </select>
+                </div>
+                <button
+                  type="submit"
+                  disabled={createHostel.isPending}
+                  className="w-full py-2.5 bg-[#659287] hover:bg-[#527a70] text-white text-xs font-bold rounded-xl transition"
+                >
+                  Add Hostel
+                </button>
+              </form>
+
+              {/* Add Block */}
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  createBlock.mutate();
+                }}
+                className="bg-white p-5 rounded-2xl border border-[#B1D3B9] shadow-xs space-y-3"
+              >
+                <h2 className="text-sm font-bold text-[#1e3831] flex items-center gap-2">
+                  <Layers className="w-4 h-4 text-[#659287]" /> 2. Add Building Wing / Block
+                </h2>
                 <select
-                  value={hostelForm.gender}
-                  onChange={(e) => setHostelForm({ ...hostelForm, gender: e.target.value as any })}
+                  required
+                  value={blockForm.hostelId}
+                  onChange={(e) => setBlockForm({ ...blockForm, hostelId: e.target.value })}
                   className="w-full px-3 py-2 border border-[#B1D3B9] rounded-xl text-sm bg-white text-[#1e3831]"
                 >
-                  <option value="MALE">Male</option>
-                  <option value="FEMALE">Female</option>
-                  <option value="COED">Co-Ed</option>
+                  <option value="">Select Hostel Residence...</option>
+                  {hostels?.map((h) => (
+                    <option key={h._id} value={h._id}>
+                      {h.name} ({h.code})
+                    </option>
+                  ))}
                 </select>
-              </div>
-              <button
-                type="submit"
-                disabled={createHostel.isPending}
-                className="w-full py-2.5 bg-[#659287] hover:bg-[#527a70] text-white text-xs font-bold rounded-xl transition"
-              >
-                Add Hostel
-              </button>
-            </form>
-
-            {/* Add Block */}
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                createBlock.mutate();
-              }}
-              className="bg-white p-5 rounded-2xl border border-[#B1D3B9] shadow-xs space-y-3"
-            >
-              <h2 className="text-sm font-bold text-[#1e3831] flex items-center gap-2">
-                <Layers className="w-4 h-4 text-[#659287]" /> 2. Add Building Wing / Block
-              </h2>
-              <select
-                required
-                value={blockForm.hostelId}
-                onChange={(e) => setBlockForm({ ...blockForm, hostelId: e.target.value })}
-                className="w-full px-3 py-2 border border-[#B1D3B9] rounded-xl text-sm bg-white text-[#1e3831]"
-              >
-                <option value="">Select Hostel Residence...</option>
-                {hostels?.map((h) => (
-                  <option key={h._id} value={h._id}>
-                    {h.name} ({h.code})
-                  </option>
-                ))}
-              </select>
-              <div className="grid grid-cols-2 gap-2">
-                <input
-                  type="text"
-                  required
-                  placeholder="Wing Name (e.g. North Wing)"
-                  value={blockForm.name}
-                  onChange={(e) => setBlockForm({ ...blockForm, name: e.target.value })}
-                  className="w-full px-3 py-2 border border-[#B1D3B9] rounded-xl text-sm focus:border-[#659287] focus:ring-1 focus:ring-[#659287] focus:outline-none"
-                />
-                <input
-                  type="text"
-                  required
-                  placeholder="Code (BLK-A)"
-                  value={blockForm.code}
-                  onChange={(e) => setBlockForm({ ...blockForm, code: e.target.value })}
-                  className="w-full px-3 py-2 border border-[#B1D3B9] rounded-xl text-sm focus:border-[#659287] focus:ring-1 focus:ring-[#659287] focus:outline-none"
-                />
-              </div>
-              <button
-                type="submit"
-                disabled={createBlock.isPending}
-                className="w-full py-2.5 bg-[#88BDA4] hover:bg-[#73a990] text-[#1e3831] text-xs font-bold rounded-xl transition"
-              >
-                Add Wing
-              </button>
-            </form>
-
-            {/* Add Room */}
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                createRoom.mutate();
-              }}
-              className="bg-white p-5 rounded-2xl border border-[#B1D3B9] shadow-xs space-y-3"
-            >
-              <h2 className="text-sm font-bold text-[#1e3831] flex items-center gap-2">
-                <DoorOpen className="w-4 h-4 text-[#659287]" /> 3. Add Room & Beds
-              </h2>
-              <select
-                required
-                value={roomForm.hostelId}
-                onChange={(e) => setRoomForm({ ...roomForm, hostelId: e.target.value, blockId: '' })}
-                className="w-full px-3 py-2 border border-[#B1D3B9] rounded-xl text-sm bg-white text-[#1e3831]"
-              >
-                <option value="">Select Hostel Residence...</option>
-                {hostels?.map((h) => (
-                  <option key={h._id} value={h._id}>
-                    {h.name} ({h.code})
-                  </option>
-                ))}
-              </select>
-              <select
-                required
-                value={roomForm.blockId}
-                onChange={(e) => setRoomForm({ ...roomForm, blockId: e.target.value })}
-                className="w-full px-3 py-2 border border-[#B1D3B9] rounded-xl text-sm bg-white text-[#1e3831]"
-              >
-                <option value="">Select Wing / Block...</option>
-                {blocks?.map((b) => (
-                  <option key={b._id} value={b._id}>
-                    {b.name} ({b.code})
-                  </option>
-                ))}
-              </select>
-              <div className="grid grid-cols-3 gap-2">
-                <input
-                  type="text"
-                  required
-                  placeholder="Room # (101)"
-                  value={roomForm.roomNumber}
-                  onChange={(e) => setRoomForm({ ...roomForm, roomNumber: e.target.value })}
-                  className="px-3 py-2 border border-[#B1D3B9] rounded-xl text-sm"
-                />
-                <input
-                  type="number"
-                  min={0}
-                  placeholder="Floor"
-                  value={roomForm.floor}
-                  onChange={(e) => setRoomForm({ ...roomForm, floor: parseInt(e.target.value, 10) || 0 })}
-                  className="px-3 py-2 border border-[#B1D3B9] rounded-xl text-sm"
-                />
-                <input
-                  type="number"
-                  min={1}
-                  placeholder="Beds"
-                  value={roomForm.capacity}
-                  onChange={(e) => setRoomForm({ ...roomForm, capacity: parseInt(e.target.value, 10) || 1 })}
-                  className="px-3 py-2 border border-[#B1D3B9] rounded-xl text-sm"
-                />
-              </div>
-              <div className="flex items-center justify-between gap-2">
-                <select
-                  value={roomForm.roomType}
-                  onChange={(e) => setRoomForm({ ...roomForm, roomType: e.target.value as any })}
-                  className="px-3 py-2 border border-[#B1D3B9] rounded-xl text-sm bg-white flex-1 text-[#1e3831]"
-                >
-                  <option value="SINGLE">SINGLE</option>
-                  <option value="DOUBLE">DOUBLE</option>
-                  <option value="TRIPLE">TRIPLE</option>
-                  <option value="DORMITORY">DORMITORY</option>
-                </select>
-                <label className="flex items-center gap-1.5 text-xs text-[#1e3831] cursor-pointer">
+                <div className="grid grid-cols-2 gap-2">
                   <input
-                    type="checkbox"
-                    checked={roomForm.isAccessible}
-                    onChange={(e) => setRoomForm({ ...roomForm, isAccessible: e.target.checked })}
-                    className="accent-[#659287]"
+                    type="text"
+                    required
+                    placeholder="Wing Name (e.g. North Wing)"
+                    value={blockForm.name}
+                    onChange={(e) => setBlockForm({ ...blockForm, name: e.target.value })}
+                    className="w-full px-3 py-2 border border-[#B1D3B9] rounded-xl text-sm focus:border-[#659287] focus:ring-1 focus:ring-[#659287] focus:outline-none"
                   />
-                  Accessible
-                </label>
-              </div>
-              <button
-                type="submit"
-                disabled={createRoom.isPending}
-                className="w-full py-2.5 bg-[#659287] hover:bg-[#527a70] text-white text-xs font-bold rounded-xl transition"
+                  <input
+                    type="text"
+                    required
+                    placeholder="Code (BLK-A)"
+                    value={blockForm.code}
+                    onChange={(e) => setBlockForm({ ...blockForm, code: e.target.value })}
+                    className="w-full px-3 py-2 border border-[#B1D3B9] rounded-xl text-sm focus:border-[#659287] focus:ring-1 focus:ring-[#659287] focus:outline-none"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={createBlock.isPending}
+                  className="w-full py-2.5 bg-[#88BDA4] hover:bg-[#73a990] text-[#1e3831] text-xs font-bold rounded-xl transition"
+                >
+                  Add Wing
+                </button>
+              </form>
+
+              {/* Add Room */}
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  createRoom.mutate();
+                }}
+                className="bg-white p-5 rounded-2xl border border-[#B1D3B9] shadow-xs space-y-3"
               >
-                Save Room & Beds
-              </button>
-            </form>
-          </div>
+                <h2 className="text-sm font-bold text-[#1e3831] flex items-center gap-2">
+                  <DoorOpen className="w-4 h-4 text-[#659287]" /> 3. Add Room & Beds
+                </h2>
+                <select
+                  required
+                  value={roomForm.hostelId}
+                  onChange={(e) => setRoomForm({ ...roomForm, hostelId: e.target.value, blockId: '' })}
+                  className="w-full px-3 py-2 border border-[#B1D3B9] rounded-xl text-sm bg-white text-[#1e3831]"
+                >
+                  <option value="">Select Hostel Residence...</option>
+                  {hostels?.map((h) => (
+                    <option key={h._id} value={h._id}>
+                      {h.name} ({h.code})
+                    </option>
+                  ))}
+                </select>
+                <select
+                  required
+                  value={roomForm.blockId}
+                  onChange={(e) => setRoomForm({ ...roomForm, blockId: e.target.value })}
+                  className="w-full px-3 py-2 border border-[#B1D3B9] rounded-xl text-sm bg-white text-[#1e3831]"
+                >
+                  <option value="">Select Wing / Block...</option>
+                  {blocks?.map((b) => (
+                    <option key={b._id} value={b._id}>
+                      {b.name} ({b.code})
+                    </option>
+                  ))}
+                </select>
+                <div className="grid grid-cols-3 gap-2">
+                  <input
+                    type="text"
+                    required
+                    placeholder="Room # (101)"
+                    value={roomForm.roomNumber}
+                    onChange={(e) => setRoomForm({ ...roomForm, roomNumber: e.target.value })}
+                    className="px-3 py-2 border border-[#B1D3B9] rounded-xl text-sm"
+                  />
+                  <input
+                    type="number"
+                    min={0}
+                    placeholder="Floor"
+                    value={roomForm.floor}
+                    onChange={(e) => setRoomForm({ ...roomForm, floor: parseInt(e.target.value, 10) || 0 })}
+                    className="px-3 py-2 border border-[#B1D3B9] rounded-xl text-sm"
+                  />
+                  <input
+                    type="number"
+                    min={1}
+                    placeholder="Beds"
+                    value={roomForm.capacity}
+                    onChange={(e) => setRoomForm({ ...roomForm, capacity: parseInt(e.target.value, 10) || 1 })}
+                    className="px-3 py-2 border border-[#B1D3B9] rounded-xl text-sm"
+                  />
+                </div>
+                <div className="flex items-center justify-between gap-2">
+                  <select
+                    value={roomForm.roomType}
+                    onChange={(e) => setRoomForm({ ...roomForm, roomType: e.target.value as any })}
+                    className="px-3 py-2 border border-[#B1D3B9] rounded-xl text-sm bg-white flex-1 text-[#1e3831]"
+                  >
+                    <option value="SINGLE">SINGLE</option>
+                    <option value="DOUBLE">DOUBLE</option>
+                    <option value="TRIPLE">TRIPLE</option>
+                    <option value="DORMITORY">DORMITORY</option>
+                  </select>
+                  <label className="flex items-center gap-1.5 text-xs text-[#1e3831] cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={roomForm.isAccessible}
+                      onChange={(e) => setRoomForm({ ...roomForm, isAccessible: e.target.checked })}
+                      className="accent-[#659287]"
+                    />
+                    Accessible
+                  </label>
+                </div>
+                <button
+                  type="submit"
+                  disabled={createRoom.isPending}
+                  className="w-full py-2.5 bg-[#659287] hover:bg-[#527a70] text-white text-xs font-bold rounded-xl transition"
+                >
+                  Save Room & Beds
+                </button>
+              </form>
+            </div>
+          )}
 
           {/* Hostels Grid */}
-          <div className="lg:col-span-2 space-y-4">
-            <h2 className="text-lg font-bold text-[#1e3831] flex items-center gap-2">
-              <Building2 className="w-5 h-5 text-[#659287]" />
-              Campus Residences ({hostels?.length ?? 0})
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className={`${isAdminOrWarden ? 'lg:col-span-2' : 'w-full'} space-y-4`}>
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-bold text-[#1e3831] flex items-center gap-2">
+                <Building2 className="w-5 h-5 text-[#659287]" />
+                Campus Residences ({hostels?.length ?? 0})
+              </h2>
+              {!isAdminOrWarden && (
+                <span className="text-xs text-[#3f5c53]">Browse available campus hostels</span>
+              )}
+            </div>
+            <div className={`grid grid-cols-1 ${isAdminOrWarden ? 'md:grid-cols-2' : 'md:grid-cols-2 lg:grid-cols-3'} gap-4`}>
               {hostels?.map((h) => (
                 <motion.div
                   key={h._id}
@@ -428,83 +440,91 @@ export default function InventoryAndCyclesPage() {
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Create Cycle */}
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              createCycle.mutate();
-            }}
-            className="bg-white p-6 rounded-2xl border border-[#B1D3B9] shadow-xs space-y-3.5"
-          >
-            <h2 className="text-base font-bold text-[#1e3831] flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-[#659287]" /> Schedule Application Window
-            </h2>
-            <input
-              type="text"
-              required
-              placeholder="Round Title (e.g. Fall 2026 Room Allotment)"
-              value={cycleForm.title}
-              onChange={(e) => setCycleForm({ ...cycleForm, title: e.target.value })}
-              className="w-full px-3 py-2 border border-[#B1D3B9] rounded-xl text-sm focus:border-[#659287] focus:ring-1 focus:ring-[#659287] focus:outline-none"
-            />
-            <div className="grid grid-cols-2 gap-2">
+        <div className={`grid grid-cols-1 ${isAdminOrWarden ? 'lg:grid-cols-3' : 'lg:grid-cols-1'} gap-6`}>
+          {/* Create Cycle (Admins & Wardens Only) */}
+          {isAdminOrWarden && (
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                createCycle.mutate();
+              }}
+              className="bg-white p-6 rounded-2xl border border-[#B1D3B9] shadow-xs space-y-3.5"
+            >
+              <h2 className="text-base font-bold text-[#1e3831] flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-[#659287]" /> Schedule Application Window
+              </h2>
               <input
                 type="text"
                 required
-                placeholder="2026-2027"
-                value={cycleForm.academicYear}
-                onChange={(e) => setCycleForm({ ...cycleForm, academicYear: e.target.value })}
-                className="px-3 py-2 border border-[#B1D3B9] rounded-xl text-sm"
+                placeholder="Round Title (e.g. Fall 2026 Room Allotment)"
+                value={cycleForm.title}
+                onChange={(e) => setCycleForm({ ...cycleForm, title: e.target.value })}
+                className="w-full px-3 py-2 border border-[#B1D3B9] rounded-xl text-sm focus:border-[#659287] focus:ring-1 focus:ring-[#659287] focus:outline-none"
               />
-              <input
-                type="number"
-                min={1}
-                max={8}
-                value={cycleForm.semester}
-                onChange={(e) => setCycleForm({ ...cycleForm, semester: parseInt(e.target.value, 10) || 1 })}
-                className="px-3 py-2 border border-[#B1D3B9] rounded-xl text-sm"
-              />
-            </div>
-            <div>
-              <label className="block text-[10px] font-bold uppercase text-[#659287] mb-1">Applications Open</label>
-              <input
-                type="datetime-local"
-                value={cycleForm.windowStart}
-                onChange={(e) => setCycleForm({ ...cycleForm, windowStart: e.target.value })}
-                className="w-full px-3 py-2 border border-[#B1D3B9] rounded-xl text-xs"
-              />
-            </div>
-            <div>
-              <label className="block text-[10px] font-bold uppercase text-[#659287] mb-1">Applications Close</label>
-              <input
-                type="datetime-local"
-                value={cycleForm.windowEnd}
-                onChange={(e) => setCycleForm({ ...cycleForm, windowEnd: e.target.value })}
-                className="w-full px-3 py-2 border border-[#B1D3B9] rounded-xl text-xs"
-              />
-            </div>
-            <div>
-              <label className="block text-[10px] font-bold uppercase text-[#659287] mb-1">Auditing Reference Seed</label>
-              <input
-                type="number"
-                value={cycleForm.randomSeed}
-                onChange={(e) => setCycleForm({ ...cycleForm, randomSeed: parseInt(e.target.value, 10) || 42 })}
-                className="w-full px-3 py-2 border border-[#B1D3B9] rounded-xl text-sm"
-              />
-            </div>
-            <button
-              type="submit"
-              disabled={createCycle.isPending}
-              className="w-full py-2.5 bg-[#659287] hover:bg-[#527a70] text-white text-xs font-bold rounded-xl transition"
-            >
-              Open Application Window
-            </button>
-          </form>
+              <div className="grid grid-cols-2 gap-2">
+                <input
+                  type="text"
+                  required
+                  placeholder="2026-2027"
+                  value={cycleForm.academicYear}
+                  onChange={(e) => setCycleForm({ ...cycleForm, academicYear: e.target.value })}
+                  className="px-3 py-2 border border-[#B1D3B9] rounded-xl text-sm"
+                />
+                <input
+                  type="number"
+                  min={1}
+                  max={8}
+                  value={cycleForm.semester}
+                  onChange={(e) => setCycleForm({ ...cycleForm, semester: parseInt(e.target.value, 10) || 1 })}
+                  className="px-3 py-2 border border-[#B1D3B9] rounded-xl text-sm"
+                />
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold uppercase text-[#659287] mb-1">Applications Open</label>
+                <input
+                  type="datetime-local"
+                  value={cycleForm.windowStart}
+                  onChange={(e) => setCycleForm({ ...cycleForm, windowStart: e.target.value })}
+                  className="w-full px-3 py-2 border border-[#B1D3B9] rounded-xl text-xs"
+                />
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold uppercase text-[#659287] mb-1">Applications Close</label>
+                <input
+                  type="datetime-local"
+                  value={cycleForm.windowEnd}
+                  onChange={(e) => setCycleForm({ ...cycleForm, windowEnd: e.target.value })}
+                  className="w-full px-3 py-2 border border-[#B1D3B9] rounded-xl text-xs"
+                />
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold uppercase text-[#659287] mb-1">Auditing Reference Seed</label>
+                <input
+                  type="number"
+                  value={cycleForm.randomSeed}
+                  onChange={(e) => setCycleForm({ ...cycleForm, randomSeed: parseInt(e.target.value, 10) || 42 })}
+                  className="w-full px-3 py-2 border border-[#B1D3B9] rounded-xl text-sm"
+                />
+              </div>
+              <button
+                type="submit"
+                disabled={createCycle.isPending}
+                className="w-full py-2.5 bg-[#659287] hover:bg-[#527a70] text-white text-xs font-bold rounded-xl transition"
+              >
+                Open Application Window
+              </button>
+            </form>
+          )}
 
           {/* Cycles List */}
-          <div className="lg:col-span-2 space-y-3">
-            <h2 className="text-lg font-bold text-[#1e3831]">Scheduled Allotment Rounds ({cycles?.length ?? 0})</h2>
+          <div className={`${isAdminOrWarden ? 'lg:col-span-2' : 'w-full max-w-4xl mx-auto'} space-y-4`}>
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-bold text-[#1e3831]">Scheduled Allotment Rounds ({cycles?.length ?? 0})</h2>
+              {!isAdminOrWarden && (
+                <span className="text-xs text-[#3f5c53]">Current and upcoming room application windows</span>
+              )}
+            </div>
+
             {cycles?.map((c) => (
               <div
                 key={c._id}
@@ -512,31 +532,56 @@ export default function InventoryAndCyclesPage() {
               >
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#E6F2DD] text-[#1e3831] border border-[#B1D3B9]">
-                      {c.status}
+                    <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                      c.status === 'OPEN'
+                        ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                        : c.status === 'CLOSED'
+                        ? 'bg-slate-100 text-slate-700 border border-slate-300'
+                        : 'bg-[#E6F2DD] text-[#1e3831] border border-[#B1D3B9]'
+                    }`}>
+                      {c.status === 'OPEN' ? 'ACCEPTING APPLICATIONS' : c.status}
                     </span>
                     <span className="text-xs text-[#3f5c53]">
                       Academic Year {c.academicYear} · Semester {c.semester}
                     </span>
                   </div>
-                  <h3 className="text-base font-bold text-[#1e3831] mt-1">{c.title}</h3>
-                  <p className="text-xs text-[#3f5c53] mt-0.5">
-                    Applicants: {c.totalApplicantsCount} · Allotted: {c.allocatedCount} · Waiting List:{' '}
-                    {c.waitlistedCount}
-                  </p>
+                  <h3 className="text-base font-bold text-[#1e3831] mt-1.5">{c.title}</h3>
+                  <div className="text-xs text-[#3f5c53] mt-1 space-y-0.5">
+                    <p>
+                      <strong>Application Window:</strong> {new Date(c.windowStart).toLocaleDateString()} — {new Date(c.windowEnd).toLocaleDateString()}
+                    </p>
+                    <p className="text-[11px] text-[#659287]">
+                      Applicants: {c.totalApplicantsCount} · Allotted: {c.allocatedCount} · Waiting List: {c.waitlistedCount}
+                    </p>
+                  </div>
                 </div>
 
-                <div className="flex flex-wrap gap-2">
-                  {['OPEN', 'CLOSED'].map((st) => (
-                    <button
-                      key={st}
-                      onClick={() => updateCycleStatus.mutate({ id: c._id, status: st })}
-                      disabled={c.status === st}
-                      className="px-3 py-1.5 rounded-lg border border-[#B1D3B9] text-xs font-bold text-[#1e3831] hover:bg-[#E6F2DD] disabled:opacity-40 transition"
-                    >
-                      Set {st}
-                    </button>
-                  ))}
+                <div className="flex flex-wrap items-center gap-2">
+                  {isAdminOrWarden ? (
+                    ['OPEN', 'CLOSED'].map((st) => (
+                      <button
+                        key={st}
+                        onClick={() => updateCycleStatus.mutate({ id: c._id, status: st })}
+                        disabled={c.status === st}
+                        className="px-3 py-1.5 rounded-lg border border-[#B1D3B9] text-xs font-bold text-[#1e3831] hover:bg-[#E6F2DD] disabled:opacity-40 transition"
+                      >
+                        Set {st}
+                      </button>
+                    ))
+                  ) : (
+                    c.status === 'OPEN' ? (
+                      <Link
+                        href="/student/apply"
+                        className="px-4 py-2 bg-[#659287] hover:bg-[#527a70] text-white text-xs font-bold rounded-xl shadow-xs transition flex items-center gap-1.5"
+                      >
+                        Apply for Room
+                      </Link>
+                    ) : (
+                      <span className="px-3 py-1 bg-slate-100 text-slate-500 text-xs font-medium rounded-lg">
+                        Round {c.status.toLowerCase()}
+                      </span>
+                    )
+                  )}
                 </div>
               </div>
             ))}
