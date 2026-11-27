@@ -72,13 +72,15 @@ export default function StudentHubPage() {
     queryKey: ['hostels-all'],
     queryFn: async () => {
       const res = await api.get('/inventory/hostels');
-      const list = res.data.data as any[];
-      if (list.length > 0 && rankedHostelIds.length === 0) {
-        setRankedHostelIds(list.slice(0, 3).map((h) => h._id));
-      }
-      return list;
+      return res.data.data as any[];
     },
   });
+
+  React.useEffect(() => {
+    if (hostels && hostels.length > 0 && rankedHostelIds.length === 0) {
+      setRankedHostelIds(hostels.map((h: any) => h._id));
+    }
+  }, [hostels, rankedHostelIds.length]);
 
   const { data: myApp } = useQuery({
     queryKey: ['my-application', selectedCycleId, user?._id],
@@ -358,51 +360,107 @@ export default function StudentHubPage() {
             <div>
               <h2 className="text-xl font-bold text-[#1e3831]">Rank Your Preferred Hostels</h2>
               <p className="text-xs text-[#3f5c53] mt-1">
-                Drag or use the arrows to order your preferred hostel blocks from 1st choice to 3rd choice.
+                Select your preferred hostels from the campus directory and arrange them in order of preference.
               </p>
             </div>
 
-            <div className="space-y-2.5">
-              {rankedHostelIds.map((hId, idx) => {
-                const h = hostels?.find((x) => x._id === hId);
-                return (
-                  <div
-                    key={hId}
-                    className="p-3.5 rounded-xl border border-[#B1D3B9] bg-[#E6F2DD]/30 flex items-center justify-between"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="w-7 h-7 rounded-lg bg-[#659287] text-white text-xs font-bold flex items-center justify-center">
-                        #{idx + 1}
-                      </span>
-                      <div>
-                        <p className="text-sm font-bold text-[#1e3831]">{h?.name || hId}</p>
-                        <p className="text-[11px] text-[#3f5c53]">
-                          {h?.code} · {h?.gender} Hostel
-                        </p>
+            {(!hostels || hostels.length === 0) ? (
+              <div className="p-5 rounded-2xl bg-[#E6F2DD] border border-[#88BDA4] space-y-3">
+                <p className="text-xs font-bold text-[#1e3831]">No Hostels Registered in Database</p>
+                <p className="text-xs text-[#3f5c53]">
+                  The campus inventory currently has no active hostels. Click below to initialize the standard campus residences automatically into your database.
+                </p>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    await api.post('/inventory/seed');
+                    queryClient.invalidateQueries({ queryKey: ['hostels-all'] });
+                  }}
+                  className="px-4 py-2 bg-[#659287] hover:bg-[#527a70] text-white text-xs font-bold rounded-xl shadow-xs transition"
+                >
+                  Initialize Campus Residences
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="space-y-2.5">
+                  <p className="text-xs font-bold uppercase tracking-wider text-[#659287]">
+                    Your Ranked Choices ({rankedHostelIds.length})
+                  </p>
+                  {rankedHostelIds.map((hId, idx) => {
+                    const h = hostels?.find((x) => x._id === hId);
+                    return (
+                      <div
+                        key={hId}
+                        className="p-3.5 rounded-xl border border-[#B1D3B9] bg-[#E6F2DD]/30 flex items-center justify-between"
+                      >
+                        <div className="flex items-center gap-3">
+                          <span className="w-7 h-7 rounded-lg bg-[#659287] text-white text-xs font-bold flex items-center justify-center">
+                            #{idx + 1}
+                          </span>
+                          <div>
+                            <p className="text-sm font-bold text-[#1e3831]">{h?.name || hId}</p>
+                            <p className="text-[11px] text-[#3f5c53]">
+                              {h?.code} · {h?.gender} Hostel
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <button
+                            type="button"
+                            onClick={() => moveHostel(idx, -1)}
+                            className="p-1.5 rounded-lg hover:bg-white border border-transparent hover:border-[#B1D3B9]"
+                            title="Move higher"
+                          >
+                            <ArrowUp className="w-4 h-4 text-[#659287]" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => moveHostel(idx, 1)}
+                            className="p-1.5 rounded-lg hover:bg-white border border-transparent hover:border-[#B1D3B9]"
+                            title="Move lower"
+                          >
+                            <ArrowDown className="w-4 h-4 text-[#659287]" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setRankedHostelIds((prev) => prev.filter((id) => id !== hId))}
+                            className="px-2 py-1 text-[11px] font-semibold text-rose-600 hover:bg-rose-50 rounded-lg ml-1"
+                            title="Remove choice"
+                          >
+                            Remove
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <button
-                        type="button"
-                        onClick={() => moveHostel(idx, -1)}
-                        className="p-1.5 rounded-lg hover:bg-white border border-transparent hover:border-[#B1D3B9]"
-                        title="Move higher"
-                      >
-                        <ArrowUp className="w-4 h-4 text-[#659287]" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => moveHostel(idx, 1)}
-                        className="p-1.5 rounded-lg hover:bg-white border border-transparent hover:border-[#B1D3B9]"
-                        title="Move lower"
-                      >
-                        <ArrowDown className="w-4 h-4 text-[#659287]" />
-                      </button>
+                    );
+                  })}
+                </div>
+
+                {hostels.some((h) => !rankedHostelIds.includes(h._id)) && (
+                  <div className="space-y-2 pt-2 border-t border-[#B1D3B9]/40">
+                    <p className="text-xs font-bold uppercase tracking-wider text-[#3f5c53]">
+                      Available Hostels to Add
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {hostels
+                        .filter((h) => !rankedHostelIds.includes(h._id))
+                        .map((h) => (
+                          <button
+                            key={h._id}
+                            type="button"
+                            onClick={() => setRankedHostelIds((prev) => [...prev, h._id])}
+                            className="px-3 py-2 rounded-xl border border-[#B1D3B9] bg-white hover:bg-[#E6F2DD] text-xs font-semibold text-[#1e3831] flex items-center gap-1.5 transition"
+                          >
+                            <span className="font-bold">+</span>
+                            <span>{h.name}</span>
+                            <span className="text-[10px] text-[#659287]">({h.code})</span>
+                          </button>
+                        ))}
                     </div>
                   </div>
-                );
-              })}
-            </div>
+                )}
+              </div>
+            )}
 
             <div>
               <label className="block text-xs font-bold text-[#1e3831] uppercase mb-2">

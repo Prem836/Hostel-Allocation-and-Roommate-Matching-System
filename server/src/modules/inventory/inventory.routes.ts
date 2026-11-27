@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { InventoryController } from './inventory.controller.js';
+import { InventoryService } from './inventory.service.js';
 import { authenticate, authorize } from '../../middleware/auth.js';
 
 const router = Router();
@@ -7,6 +8,15 @@ const router = Router();
 // Public / Authenticated read routes
 router.get('/stats', InventoryController.getStats);
 router.get('/hostels', InventoryController.getHostels);
+router.post('/seed', async (req, res) => {
+  try {
+    await InventoryService.seedDefaultInventory();
+    const hostels = await InventoryService.getHostels();
+    res.json({ success: true, message: 'Seeded default campus hostels', data: hostels });
+  } catch (err: any) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
 router.get('/hostels/:id', InventoryController.getHostelById);
 router.get('/hostels/:hostelId/blocks', InventoryController.getBlocksByHostel);
 router.get('/rooms', InventoryController.getRooms);

@@ -30,7 +30,107 @@ export class InventoryService {
   static async getHostels(gender?: string): Promise<IHostel[]> {
     const query: any = { institutionId: ENV.INSTITUTION_ID };
     if (gender) query.gender = gender;
-    return await Hostel.find(query).sort({ name: 1 });
+    let hostels = await Hostel.find(query).sort({ name: 1 });
+    if (hostels.length === 0 && !gender) {
+      await this.seedDefaultInventory();
+      hostels = await Hostel.find(query).sort({ name: 1 });
+    }
+    return hostels;
+  }
+
+  static async seedDefaultInventory(): Promise<void> {
+    const existing = await Hostel.countDocuments({ institutionId: ENV.INSTITUTION_ID });
+    if (existing > 0) return;
+
+    // 1. APJ Abdul Kalam Residence (Male)
+    const h1 = await Hostel.create({
+      institutionId: ENV.INSTITUTION_ID,
+      name: 'APJ Abdul Kalam Hall',
+      code: 'BH-1',
+      gender: 'MALE',
+      totalCapacity: 60,
+    });
+    const b1 = await Block.create({
+      institutionId: ENV.INSTITUTION_ID,
+      hostelId: h1._id,
+      name: 'North Wing',
+      code: 'BLK-A',
+      floorsCount: 3,
+    });
+    const r1 = await Room.create({
+      institutionId: ENV.INSTITUTION_ID,
+      hostelId: h1._id,
+      blockId: b1._id,
+      roomNumber: '101',
+      floor: 1,
+      roomType: 'DOUBLE',
+      capacity: 2,
+      isAccessible: false,
+    });
+    await Bed.create([
+      { institutionId: ENV.INSTITUTION_ID, hostelId: h1._id, blockId: b1._id, roomId: r1._id, bedLabel: 'A', status: 'VACANT' },
+      { institutionId: ENV.INSTITUTION_ID, hostelId: h1._id, blockId: b1._id, roomId: r1._id, bedLabel: 'B', status: 'VACANT' },
+    ]);
+
+    // 2. Sarojini Naidu Residence (Female)
+    const h2 = await Hostel.create({
+      institutionId: ENV.INSTITUTION_ID,
+      name: 'Sarojini Naidu Hall',
+      code: 'GH-1',
+      gender: 'FEMALE',
+      totalCapacity: 60,
+    });
+    const b2 = await Block.create({
+      institutionId: ENV.INSTITUTION_ID,
+      hostelId: h2._id,
+      name: 'East Wing',
+      code: 'BLK-A',
+      floorsCount: 3,
+    });
+    const r2 = await Room.create({
+      institutionId: ENV.INSTITUTION_ID,
+      hostelId: h2._id,
+      blockId: b2._id,
+      roomNumber: '101',
+      floor: 1,
+      roomType: 'DOUBLE',
+      capacity: 2,
+      isAccessible: false,
+    });
+    await Bed.create([
+      { institutionId: ENV.INSTITUTION_ID, hostelId: h2._id, blockId: b2._id, roomId: r2._id, bedLabel: 'A', status: 'VACANT' },
+      { institutionId: ENV.INSTITUTION_ID, hostelId: h2._id, blockId: b2._id, roomId: r2._id, bedLabel: 'B', status: 'VACANT' },
+    ]);
+
+    // 3. Tagore International Residence (Co-Ed)
+    const h3 = await Hostel.create({
+      institutionId: ENV.INSTITUTION_ID,
+      name: 'Tagore International Hall',
+      code: 'TH-1',
+      gender: 'COED',
+      totalCapacity: 50,
+    });
+    const b3 = await Block.create({
+      institutionId: ENV.INSTITUTION_ID,
+      hostelId: h3._id,
+      name: 'Central Wing',
+      code: 'BLK-A',
+      floorsCount: 3,
+    });
+    const r3 = await Room.create({
+      institutionId: ENV.INSTITUTION_ID,
+      hostelId: h3._id,
+      blockId: b3._id,
+      roomNumber: '101',
+      floor: 1,
+      roomType: 'DOUBLE',
+      capacity: 2,
+      isAccessible: false,
+    });
+    await Bed.create([
+      { institutionId: ENV.INSTITUTION_ID, hostelId: h3._id, blockId: b3._id, roomId: r3._id, bedLabel: 'A', status: 'VACANT' },
+      { institutionId: ENV.INSTITUTION_ID, hostelId: h3._id, blockId: b3._id, roomId: r3._id, bedLabel: 'B', status: 'VACANT' },
+    ]);
   }
 
   static async getHostelById(id: string): Promise<IHostel> {
