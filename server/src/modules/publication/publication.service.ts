@@ -194,7 +194,7 @@ export class PublicationService {
       cycleId,
       institutionId: ENV.INSTITUTION_ID,
       status: 'PUBLISHED',
-    });
+    }).sort({ draftNumber: -1, createdAt: -1 });
 
     if (!publishedDraft) {
       throw { status: 404, message: 'No published allocation exists for this cycle yet' };

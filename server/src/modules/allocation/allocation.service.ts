@@ -72,7 +72,7 @@ export class AllocationEngineService {
 
     // 3. Fetch vacant inventory
     const [hostels, rooms, beds] = await Promise.all([
-      Hostel.find({ institutionId: ENV.INSTITUTION_ID, isActive: true }),
+      Hostel.find({ institutionId: ENV.INSTITUTION_ID, isActive: { $ne: false } }),
       Room.find({ institutionId: ENV.INSTITUTION_ID }),
       Bed.find({ institutionId: ENV.INSTITUTION_ID, status: 'VACANT' }),
     ]);
