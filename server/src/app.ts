@@ -45,8 +45,9 @@ export function createApp(): Application {
     });
   });
 
-  // Authentication API routes
+  // Authentication API routes (support both /api/v1/auth and direct /auth)
   app.use('/api/v1/auth', authRoutes);
+  app.use('/auth', authRoutes);
 
   // Module M1: Inventory Management
   app.use('/api/v1/inventory', inventoryRoutes);
